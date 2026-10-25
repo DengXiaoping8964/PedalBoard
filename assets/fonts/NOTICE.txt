@@ -1,0 +1,9 @@
+Bundled webfonts
+================
+Inter — Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)
+Space Grotesk — Copyright 2020 The Space Grotesk Project Authors (https://github.com/floriankarsten/space-grotesk)
+
+Both fonts are licensed under the SIL Open Font License, Version 1.1.
+The full license texts are in Inter-OFL.txt and SpaceGrotesk-OFL.txt.
+The WOFF2 files in this folder are subsets (Latin and punctuation) of the
+upstream fonts, made for this site.

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PedalBoard — a Windows guitar pedalboard you can play immediately</title>
+<meta name="description" content="Unzip, choose your devices, and play. A beginner-friendly Windows guitar pedalboard with 24 effect types and a ready-made default chain.">
+<meta name="theme-color" content="#07080a">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PedalBoard — a Windows guitar pedalboard you can play immediately">
+<meta property="og:description" content="The default chain is already wired. Turn a knob, add an effect from one menu, and play. Free and open source for Windows x64.">
+<meta property="og:image" content="assets/hero.jpg">
+<meta property="og:image:width" content="1792">
+<meta property="og:image:height" content="1024">
+<meta property="og:image:alt" content="Electric guitar and pedals in warm amber light">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="pages.css">
+<script>try{document.documentElement.classList.add('js')}catch(e){}</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PedalBoard",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Windows 10, Windows 11",
+  "softwareVersion": "1.0.0",
+  "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+  "downloadUrl": "https://github.com/DengXiaoping8964/PedalBoard/releases/latest",
+  "codeRepository": "https://github.com/DengXiaoping8964/PedalBoard",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Person", "email": "a0966681154@gmail.com" }
+}
+</script>
+</head>
+<body data-title-en="PedalBoard — a Windows guitar pedalboard you can play immediately" data-title-zh="PedalBoard — 打开就能弹的 Windows 吉他效果器板" data-desc-en="Unzip, choose your devices, and play. A beginner-friendly Windows guitar pedalboard with 24 effect types and a ready-made default chain." data-desc-zh="解压、选设备、开弹。新手友好的 Windows 吉他效果器板，24 种效果，默认链路已经接好。">
+<a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-dynamics" viewBox="0 0 24 24"><path d="M2 12h3.2l1.8-7 3.4 14 3.2-11 2.4 8 1.8-4H22"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M2 8c3 0 3 8 6 8s3-8 6-8 3 6 6 6"/><path d="M2 20h20" opacity=".35"/></symbol>
+  <symbol id="i-drive" viewBox="0 0 24 24"><path d="M2 14h4V7h4v10h5V4h3v16h4"/></symbol>
+  <symbol id="i-mod" viewBox="0 0 24 24"><path d="M2 12c2.5-7 5-7 7.5 0s5 7 7.5 0 3.5-4 5-2"/></symbol>
+  <symbol id="i-pitch" viewBox="0 0 24 24"><path d="M8 4v16M4 8l4-4 4 4"/><path d="M16 20V4M12 16l4 4 4-4"/></symbol>
+  <symbol id="i-time" viewBox="0 0 24 24"><path d="M4 12h9"/><path d="M15 12a3 3 0 1 0 3-3"/><path d="M19 12a6 6 0 1 0 6-6" opacity=".55"/><path d="M2 8v8" opacity=".4"/></symbol>
+  <symbol id="i-special" viewBox="0 0 24 24"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path d="M12 .8a11.2 11.2 0 0 0-3.5 21.8c.6.1.8-.3.8-.6v-2c-3.1.7-3.8-1.3-3.8-1.3-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 .1 1.7-.8 2.1-1.2.1-.7.4-1.2.7-1.5-2.5-.3-5.1-1.2-5.1-5.5 0-1.2.4-2.2 1.1-3-.1-.3-.5-1.4.1-2.9 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.5.2 2.6.1 2.9.7.8 1.1 1.8 1.1 3 0 4.3-2.6 5.2-5.1 5.5.4.3.7 1 .7 2v3c0 .3.2.7.8.6A11.2 11.2 0 0 0 12 .8z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v11M7 10l5 5 5-5"/><path d="M4 20h16"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 19L19 5M9 5h10v10"/></symbol>
+  <symbol id="i-chev-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-chev-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="i-grip" viewBox="0 0 24 24"><circle cx="9" cy="7" r="1"/><circle cx="15" cy="7" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="17" r="1"/><circle cx="15" cy="17" r="1"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l9 17H3L12 3z"/><path d="M12 9v5M12 17.2v.1"/></symbol>
+  <symbol id="i-jack" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-split" viewBox="0 0 24 24"><path d="M3 12h7l5-6h6M10 12l5 6h6"/><circle cx="21" cy="6" r="1.6"/><circle cx="21" cy="18" r="1.6"/></symbol>
+  <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="13" width="4" height="7" rx="1.6"/><rect x="18" y="13" width="4" height="7" rx="1.6"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-12 0V8z"/><path d="M12 17v4"/></symbol>
+  <symbol id="i-knob" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 12l4-4"/><path d="M6.5 17.5a8 8 0 0 1 0-11" opacity=".45"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 3 3v13a3 3 0 0 0-3-3H4V4z"/><path d="M20 4h-4a3 3 0 0 0-3 3v13a3 3 0 0 1 3-3h4V4z"/></symbol>
+  <symbol id="i-window" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></symbol>
+  <symbol id="i-record" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></symbol>
+</svg>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html" aria-label="PedalBoard home" data-i18n-aria="nav.homeAria">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 34 34">
+          <rect x="2.5" y="11" width="8" height="12" rx="2.4"/>
+          <rect x="13" y="11" width="8" height="12" rx="2.4"/>
+          <rect x="23.5" y="11" width="8" height="12" rx="2.4"/>
+          <path d="M10.5 17h2.5M21 17h2.5"/>
+          <circle cx="8" cy="14.5" r="1.1" class="brand-led"/>
+        </svg>
+      </span>
+      <span class="brand-word">PedalBoard</span>
+    </a>
+    <nav class="primary-nav" id="primaryNav" aria-label="Primary">
+      <a href="guide.html" data-i18n="nav.guide">Getting started</a>
+      <a href="effects.html" data-i18n="nav.effects">Effects</a>
+      <a href="audacity.html" data-i18n="nav.recording">Recording</a>
+      <a href="advanced.html" data-i18n="nav.advanced">Advanced</a>
+      <a href="index.html#download" data-i18n="nav.download">Download</a>
+    </nav>
+    <div class="header-actions">
+      <div class="lang-switch" role="group" aria-label="Language" data-i18n-aria="nav.language">
+        <button class="lang-btn" type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button class="lang-btn" type="button" data-lang="zh" aria-pressed="false">中文</button>
+      </div>
+      <a class="icon-link" href="https://github.com/DengXiaoping8964/PedalBoard" target="_blank" rel="noopener" aria-label="Open PedalBoard on GitHub" data-i18n-aria="nav.githubAria">
+        <svg aria-hidden="true"><use href="#i-github"/></svg>
+      </a>
+      <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Open menu" data-i18n-aria="nav.menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="lang-gate" id="langGate" hidden>
+  <div class="lang-gate-card" role="dialog" aria-modal="true" aria-labelledby="langGateTitle" aria-describedby="langGateLead">
+    <p class="lang-gate-kicker" data-i18n="gate.kicker">FIRST VISIT</p>
+    <h2 id="langGateTitle" data-i18n="gate.title">Choose your language</h2>
+    <p id="langGateLead" data-i18n="gate.lead">PedalBoard has a full English and Chinese interface. Pick one now — you can switch it in the header at any time.</p>
+    <div class="lang-gate-actions">
+      <button class="lang-choice" type="button" data-gate-lang="zh">
+        <span class="lang-choice-word">中文</span>
+        <span class="lang-choice-note" data-i18n="gate.zhNote">完整中文界面</span>
+      </button>
+      <button class="lang-choice" type="button" data-gate-lang="en">
+        <span class="lang-choice-word">English</span>
+        <span class="lang-choice-note" data-i18n="gate.enNote">Full English interface</span>
+      </button>
+    </div>
+    <button class="lang-gate-skip" type="button" data-gate-skip data-i18n="gate.skip">Continue with the detected language</button>
+  </div>
+</div>
+
+<main id="main">
+  <section class="hero" id="top" aria-labelledby="heroTitle">
+    <div class="hero-bg" role="img" aria-label="A guitar and effect pedals in warm amber light" data-en-aria="A guitar and effect pedals in warm amber light" data-zh-aria="暖色灯光下的吉他与效果器"></div>
+    <div class="hero-shade"></div>
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="led" aria-hidden="true"></span><span data-en="Beginner-ready · Windows x64 · Free and open source" data-zh="新手友好 · Windows x64 · 免费开源">Beginner-ready · Windows x64 · Free and open source</span></p>
+        <h1 class="display hero-title" id="heroTitle">
+          <span data-en="Unzip." data-zh="解压。">Unzip.</span>
+          <span data-en="Pick a sound." data-zh="选个音色。">Pick a sound.</span>
+          <span class="accent" data-en="Play." data-zh="开弹。">Play.</span>
+        </h1>
+        <p class="hero-lead" data-en="The chain is already wired when PedalBoard opens. Turn a knob, choose an effect from one menu, and play — no DAW, no routing homework, no empty screen." data-zh="PedalBoard 打开时，链路已经接好。拧一个旋钮，从一个菜单里挑效果，就能开弹 — 不用宿主软件，不用先研究路由，也不是一张空白页。">The chain is already wired when PedalBoard opens. Turn a knob, choose an effect from one menu, and play — no DAW, no routing homework, no empty screen.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/DengXiaoping8964/PedalBoard/releases/latest" target="_blank" rel="noopener">
+            <svg aria-hidden="true"><use href="#i-download"/></svg>
+            <span data-en="Download v1.0.0" data-zh="下载 v1.0.0">Download v1.0.0</span>
+          </a>
+          <a class="btn btn-ghost" href="guide.html">
+            <span data-en="3-minute setup" data-zh="3 分钟上手">3-minute setup</span>
+            <svg aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+        <p class="hero-micro" data-en="3.4 MB · no installer · Windows 10/11 x64" data-zh="3.4 MB · 免安装 · Windows 10/11 x64">3.4 MB · no installer · Windows 10/11 x64</p>
+        <dl class="hero-stats">
+          <div><dt>3</dt><dd data-en="steps to sound" data-zh="步出声">steps to sound</dd></div>
+          <div><dt>8</dt><dd data-en="effects ready" data-zh="个效果已接好">effects ready</dd></div>
+          <div><dt>24</dt><dd data-en="effect types" data-zh="种效果">effect types</dd></div>
+          <div><dt>中 / EN</dt><dd data-en="bilingual UI" data-zh="双语界面">bilingual UI</dd></div>
+        </dl>
+      </div>
+
+      <aside class="hero-aside" aria-label="Default chain preview" data-en-aria="Default chain preview" data-zh-aria="默认链路预览">
+        <div class="aside-card">
+          <div class="aside-top">
+            <span class="status-led" aria-hidden="true"></span>
+            <span data-en="First launch" data-zh="首次打开">First launch</span>
+            <span class="aside-rate">48 kHz</span>
+          </div>
+          <ol class="aside-chain">
+            <li><span>01</span><b data-en="Noise Gate" data-zh="噪声门">Noise Gate</b></li>
+            <li><span>02</span><b data-en="Compressor" data-zh="压缩器">Compressor</b></li>
+            <li><span>03</span><b data-en="3-Band EQ" data-zh="三段均衡">3-Band EQ</b></li>
+            <li><span>04</span><b data-en="Overdrive" data-zh="过载">Overdrive</b></li>
+            <li><span>05</span><b data-en="Delay" data-zh="延迟">Delay</b></li>
+            <li><span>06</span><b data-en="Reverb" data-zh="混响">Reverb</b></li>
+            <li><span>07</span><b data-en="Cabinet" data-zh="箱体模拟">Cabinet</b></li>
+            <li><span>08</span><b data-en="Looper" data-zh="循环器">Looper</b></li>
+          </ol>
+          <div class="aside-foot">
+            <span data-en="8 effects already on" data-zh="8 个效果默认开启">8 effects already on</span>
+            <span class="meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <a class="scroll-cue" href="#start" aria-label="Scroll to the start section" data-en-aria="Scroll to the start section" data-zh-aria="滚动到新手介绍">
+      <span data-en="Scroll" data-zh="向下">Scroll</span>
+      <span class="scroll-line" aria-hidden="true"></span>
+    </a>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>Noise Gate <i>◆</i> Compressor <i>◆</i> 3-Band EQ <i>◆</i> Auto Wah <i>◆</i> Overdrive <i>◆</i> Distortion <i>◆</i> Fuzz <i>◆</i> Bitcrusher <i>◆</i> Chorus <i>◆</i> Flanger <i>◆</i> Phaser <i>◆</i> Tremolo <i>◆</i> Vibrato <i>◆</i> Octave <i>◆</i> Pitch Shifter <i>◆</i> Delay <i>◆</i> Reverb <i>◆</i> Cabinet <i>◆</i> Looper <i>◆</i></span>
+      <span>Noise Gate <i>◆</i> Compressor <i>◆</i> 3-Band EQ <i>◆</i> Auto Wah <i>◆</i> Overdrive <i>◆</i> Distortion <i>◆</i> Fuzz <i>◆</i> Bitcrusher <i>◆</i> Chorus <i>◆</i> Flanger <i>◆</i> Phaser <i>◆</i> Tremolo <i>◆</i> Vibrato <i>◆</i> Octave <i>◆</i> Pitch Shifter <i>◆</i> Delay <i>◆</i> Reverb <i>◆</i> Cabinet <i>◆</i> Looper <i>◆</i></span>
+    </div>
+  </div>
+
+  <section class="section start" id="start" aria-labelledby="startTitle">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <p class="kicker" data-en="01 — Why it is easy" data-zh="01 — 为什么好上手">01 — Why it is easy</p>
+        <h2 class="display" id="startTitle"><span class="line" data-en="Less setup." data-zh="少折腾，">Less setup.</span><span class="line" data-en="More playing." data-zh="多弹琴。">More playing.</span></h2>
+        <p class="section-lead" data-en="PedalBoard is built for your first ten minutes, not your tenth month. The essentials are already in place, and every extra control is optional." data-zh="PedalBoard 先照顾你打开后的前十分钟，而不是第十个月。该接的已经接好，高级功能都放在需要时再打开。">PedalBoard is built for your first ten minutes, not your tenth month. The essentials are already in place, and every extra control is optional.</p>
+      </header>
+
+      <div class="benefit-grid">
+        <article class="benefit is-wide reveal">
+          <div class="benefit-num">08<small data-en="effects" data-zh="个效果">effects</small></div>
+          <h3 data-en="The default chain is already wired." data-zh="默认链路已经接好。">The default chain is already wired.</h3>
+          <p data-en="Gate → Compressor → EQ → Overdrive → Delay → Reverb → Cabinet → Looper. It opens with all eight on, so the first note already has a sound." data-zh="噪声门 → 压缩 → 均衡 → 过载 → 延迟 → 混响 → 箱体 → 循环器。八个效果默认全开，第一声就已经有音色。">Gate → Compressor → EQ → Overdrive → Delay → Reverb → Cabinet → Looper. It opens with all eight on, so the first note already has a sound.</p>
+          <div class="chip-row">
+            <span class="chip">Gate</span><span class="chip">Comp</span><span class="chip">EQ</span><span class="chip">Drive</span><span class="chip">Delay</span><span class="chip">Reverb</span><span class="chip">Cab</span><span class="chip">Loop</span>
+          </div>
+        </article>
+
+        <article class="benefit reveal">
+          <div class="benefit-num">3<small data-en="moves" data-zh="步">moves</small></div>
+          <h3 data-en="Three moves to sound." data-zh="三步就出声。">Three moves to sound.</h3>
+          <p data-en="Unzip → open Devices → play. The full walkthrough covers every window and every cable." data-zh="解压 → 打开「音频设备」→ 开弹。完整教程把每个窗口、每根线都讲清楚。">Unzip → open Devices → play. The full walkthrough covers every window and every cable.</p>
+          <a class="benefit-link" href="guide.html"><span data-en="Open the tutorial" data-zh="打开教程">Open the tutorial</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </article>
+
+        <article class="benefit reveal">
+          <div class="benefit-num">中<small data-en="EN" data-zh="EN">EN</small></div>
+          <h3 data-en="The whole app speaks Chinese." data-zh="整个软件都有中文。">The whole app speaks Chinese.</h3>
+          <p data-en="First launch asks English or 中文. Switch later in the header or the Devices panel — no reinstall." data-zh="首次启动会问 English 还是中文。之后可在顶部或「音频设备」里随时切换，不用重装。">First launch asks English or 中文. Switch later in the header or the Devices panel — no reinstall.</p>
+        </article>
+
+        <article class="benefit reveal">
+          <div class="benefit-num">+<small data-en="one menu" data-zh="一个菜单">one menu</small></div>
+          <h3 data-en="Add an effect from one menu." data-zh="一个菜单加效果。">Add an effect from one menu.</h3>
+          <p data-en="No plugin scan and no routing matrix. Pick a name from Add effect and it lands in the chain. Sixteen slots, each type once." data-zh="不用扫插件，也不用连路由矩阵。从「添加效果」里选一个名字，它就进入链路。最多 16 槽，每种效果一份。">No plugin scan and no routing matrix. Pick a name from Add effect and it lands in the chain. Sixteen slots, each type once.</p>
+        </article>
+
+        <article class="benefit reveal">
+          <div class="benefit-num">↺<small data-en="reset" data-zh="复位">reset</small></div>
+          <h3 data-en="Double-click a knob to reset it." data-zh="双击旋钮就复位。">Double-click a knob to reset it.</h3>
+          <p data-en="Drag up and down to adjust, hold Shift for fine moves, double-click to return to the factory value. No hidden menus." data-zh="上下拖动调整，按住 Shift 精调，双击回到出厂值。没有藏起来的二级菜单。">Drag up and down to adjust, hold Shift for fine moves, double-click to return to the factory value. No hidden menus.</p>
+        </article>
+
+        <article class="benefit reveal">
+          <div class="benefit-num">REC<small data-en="Audacity" data-zh="Audacity">Audacity</small></div>
+          <h3 data-en="Record when you are ready." data-zh="想录的时候就能录。">Record when you are ready.</h3>
+          <p data-en="Audacity is free, and our beginner tutorial covers the virtual cable, recording, cleanup and export." data-zh="Audacity 免费，我们的新手教程覆盖虚拟声卡、录音、修整和导出。">Audacity is free, and our beginner tutorial covers the virtual cable, recording, cleanup and export.</p>
+          <a class="benefit-link" href="audacity.html"><span data-en="Audacity tutorial" data-zh="Audacity 教程">Audacity tutorial</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="look" aria-labelledby="lookTitle">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <p class="kicker" data-en="02 — THE ACTUAL WINDOW" data-zh="02 — 实际界面">02 — THE ACTUAL WINDOW</p>
+        <h2 class="display" id="lookTitle"><span class="line" data-en="This is the window." data-zh="这就是打开后的样子。">This is the window.</span><span class="line" data-en="Not a render." data-zh="不是渲染图。">Not a render.</span></h2>
+        <p class="section-lead" data-en="Captured from PedalBoard 1.0.0 on Windows 10. The default chain, the device status, the meters and every knob are exactly what you get after the first launch." data-zh="截自 Windows 10 上的 PedalBoard 1.0.0。默认链路、设备状态、电平表和每个旋钮，都是你首次打开后看到的东西。">Captured from PedalBoard 1.0.0 on Windows 10. The default chain, the device status, the meters and every knob are exactly what you get after the first launch.</p>
+      </header>
+      <figure class="shot-figure reveal">
+        <div class="shot-frame">
+          <img class="shot-zh" src="assets/shots/pb-main-zh.png" alt="Actual PedalBoard main window in Chinese with the default eight-effect chain" loading="lazy">
+          <img class="shot-en" src="assets/shots/pb-main-en.png" alt="Actual PedalBoard main window in English with the default eight-effect chain" loading="lazy">
+          <span class="shot-badge"><i></i><span data-en="ACTUAL UI" data-zh="真实界面">ACTUAL UI</span></span>
+          <span class="shot-pin" style="left:78.5%;top:9.7%">1</span>
+          <span class="shot-pin" style="left:85.8%;top:23.6%">2</span>
+          <span class="shot-pin" style="left:1.7%;top:21%">3</span>
+          <span class="shot-pin is-mint" style="left:5.4%;top:95.6%">4</span>
+        </div>
+        <figcaption class="shot-caption">
+          <div><b data-en="PedalBoard 1.0.0, default chain, first launch" data-zh="PedalBoard 1.0.0，默认链路，首次打开">PedalBoard 1.0.0, default chain, first launch</b><span data-en="Switch the site language to EN/中文 and the screenshot switches with it." data-zh="切换网站右上角的 EN/中文，截图也会跟着换。">Switch the site language to EN/中文 and the screenshot switches with it.</span></div>
+          <div class="shot-source" data-en="Actual app screenshot · Windows 10 · 1256 × 751" data-zh="实际软件截图 · Windows 10 · 1256 × 751">Actual app screenshot · Windows 10 · 1256 × 751</div>
+        </figcaption>
+      </figure>
+      <div class="shot-legend">
+        <span><i>1</i><span data-en="Devices: input, monitor, buffer and sample rate." data-zh="音频设备：输入、监听、缓冲区和采样率。">Devices: input, monitor, buffer and sample rate.</span></span>
+        <span><i>2</i><span data-en="ON: bypass one card without losing its settings." data-zh="ON：旁通一张卡，不丢参数。">ON: bypass one card without losing its settings.</span></span>
+        <span><i>3</i><span data-en="The default chain starts here; drag a header to reorder." data-zh="默认链路从这里开始；拖卡片头部排序。">The default chain starts here; drag a header to reorder.</span></span>
+        <span><i class="is-mint">4</i><span data-en="Status bar: input peak, latency, CPU and dropped blocks." data-zh="状态栏：输入峰值、延迟、CPU 和丢块。">Status bar: input peak, latency, CPU and dropped blocks.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section chain-section" id="default-chain" aria-labelledby="chainTitle">
+    <div class="wrap chain-panel">
+      <div class="chain-copy reveal">
+        <p class="kicker" data-en="03 — Default chain" data-zh="03 — 默认链路">03 — Default chain</p>
+        <h2 class="display" id="chainTitle"><span class="line" data-en="This is what opens." data-zh="打开就是这样。">This is what opens.</span><span class="line" data-en="Drag it." data-zh="拖一下试试。">Drag it.</span></h2>
+        <p class="section-lead" data-en="Eight effects, already in a sensible order. Drag a card or use the arrows to try it here; the real app reorders the same way and remembers your order." data-zh="八个效果，已经按合理顺序排好。在这里拖动卡片或按箭头试试；软件里也是同样的操作，并且会记住你的顺序。">Eight effects, already in a sensible order. Drag a card or use the arrows to try it here; the real app reorders the same way and remembers your order.</p>
+        <ul class="chain-points">
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="Every card has an ON switch, so you can hear exactly what it adds." data-zh="每张卡都有 ON 开关，关掉再打开就能听出它做了什么。">Every card has an ON switch, so you can hear exactly what it adds.</span></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="Knobs move with a vertical drag; Shift makes the movement five times finer." data-zh="旋钮上下拖动即可；按住 Shift 会精细五倍。">Knobs move with a vertical drag; Shift makes the movement five times finer.</span></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="The chain and every knob are saved automatically next to the exe." data-zh="链路和所有旋钮会自动保存在 exe 旁边。">The chain and every knob are saved automatically next to the exe.</span></li>
+        </ul>
+        <div class="hero-actions">
+          <a class="btn btn-ghost" href="guide.html#controls"><span data-en="Learn the controls" data-zh="学会这些操作">Learn the controls</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+
+      <div class="chain-demo reveal" aria-label="Default chain reorder demo" data-en-aria="Default chain reorder demo" data-zh-aria="默认链路重排演示">
+        <div class="card-top">
+          <span class="card-label" data-en="DEFAULT CHAIN" data-zh="默认链路">DEFAULT CHAIN</span>
+          <span class="chip" data-en="8 of 16 slots" data-zh="16 槽中的 8 个">8 of 16 slots</span>
+        </div>
+        <div class="mini-chain" id="miniChain" role="list" aria-label="Reorder the default chain" data-i18n-aria="board.chainAria">
+          <div class="chain-item" draggable="true" data-id="gate" role="listitem">
+            <span class="slot">01</span><span class="chain-grip" aria-hidden="true"><svg><use href="#i-grip"/></svg></span><span class="name" data-en="Noise Gate" data-zh="噪声门">Noise Gate</span><span class="chain-led" aria-hidden="true"></span>
+            <span class="chain-actions"><button type="button" class="move" data-move="up" aria-label="Move up" data-i18n-aria="board.moveUp"><svg><use href="#i-chev-up"/></svg></button><button type="button" class="move" data-move="down" aria-label="Move down" data-i18n-aria="board.moveDown"><svg><use href="#i-chev-down"/></svg></button></span>
+          </div>
+          <div class="chain-item" draggable="true" data-id="comp" role="listitem">
+            <span class="slot">02</span><span class="chain-grip" aria-hidden="true"><svg><use href="#i-grip"/></svg></span><span class="name" data-en="Compressor" data-zh="压缩器">Compressor</span><span class="chain-led" aria-hidden="true"></span>
+            <span class="chain-actions"><button type="button" class="move" data-move="up" aria-label="Move up" data-i18n-aria="board.moveUp"><svg><use href="#i-chev-up"/></svg></button><button type="button" class="move" data-move="down" aria-label="Move down" data-i18n-aria="board.moveDown"><svg><use href="#i-chev-down"/></svg></button></span>
+          </div>
+          <div class="chain-item" draggable="true" data-id="eq" role="listitem">
+            <span class="slot">03</span><span class="chain-grip" aria-hidden="true"><svg><use href="#i-grip"/></svg></span><span class="name" data-en="3-Band EQ" data-zh="三段均衡">3-Band EQ</span><span class="chain-led" aria-hidden="true"></span>
+            <span class="chain-actions"><button type="button" class="move" data-move="up" aria-label="Move up" data-i18n-aria="board.moveUp"><svg><use href="#i-chev-up"/></svg></button><button type="button" class="move" data-move="down" aria-label="Move down" data-i18n-aria="board.moveDown"><svg><use href="#i-chev-down"/></svg></button></span>
+          </div>
+          <div class="chain-item" draggable="true" data-id="drive" role="listitem">
+            <span class="slot">04</span><span class="chain-grip" aria-hidden="true"><svg><use href="#i-grip"/></svg></span><span class="name" data-en="Overdrive" data-zh="过载">Overdrive</span><span class="chain-led" aria-hidden="true"></span>
+            <span class="chain-actions"><button type="button" class="move" data-move="up" aria-label="Move up" data-i18n-aria="board.moveUp"><svg><use href="#i-chev-up"/></svg></button><button type="button" class="move" data-move="down" aria-label="Move down" data-i18n-aria="board.moveDown"><svg><use href="#i-chev-down"/></svg></button></span>
+          </div>
+          <div class="chain-item" draggable="true" data-id="delay" role="listitem">
+            <span class="slot">05</span><span class="chain-grip" aria-hidden="true"><svg><use href="#i-grip"/></svg></span><span class="name" data-en="Delay" data-zh="延迟">Delay</span><span class="chain-led" aria-hidden="true"></span>
+            <span class="chain-actions"><button type="button" class="move" data-move="up" aria-label="Move up" data-i18n-aria="board.moveUp"><svg><use href="#i-chev-up"/></svg></button><button type="button" class="move" data-move="down" aria-label="Move down" data-i18n-aria="board.moveDown"><svg><use href="#i-chev-down"/></svg></button></span>
+          </div>
+          <div class="chain-item" draggable="true" data-id="reverb" role="listitem">
+            <span class="slot">06</span><span class="chain-grip" aria-hidden="true"><svg><use href="#i-grip"/></svg></span><span class="name" data-en="Reverb" data-zh="混响">Reverb</span><span class="chain-led" aria-hidden="true"></span>
+            <span class="chain-actions"><button type="button" class="move" data-move="up" aria-label="Move up" data-i18n-aria="board.moveUp"><svg><use href="#i-chev-up"/></svg></button><button type="button" class="move" data-move="down" aria-label="Move down" data-i18n-aria="board.moveDown"><svg><use href="#i-chev-down"/></svg></button></span>
+          </div>
+          <div class="chain-item" draggable="true" data-id="cab" role="listitem">
+            <span class="slot">07</span><span class="chain-grip" aria-hidden="true"><svg><use href="#i-grip"/></svg></span><span class="name" data-en="Cabinet" data-zh="箱体模拟">Cabinet</span><span class="chain-led" aria-hidden="true"></span>
+            <span class="chain-actions"><button type="button" class="move" data-move="up" aria-label="Move up" data-i18n-aria="board.moveUp"><svg><use href="#i-chev-up"/></svg></button><button type="button" class="move" data-move="down" aria-label="Move down" data-i18n-aria="board.moveDown"><svg><use href="#i-chev-down"/></svg></button></span>
+          </div>
+          <div class="chain-item" draggable="true" data-id="looper" role="listitem">
+            <span class="slot">08</span><span class="chain-grip" aria-hidden="true"><svg><use href="#i-grip"/></svg></span><span class="name" data-en="Looper" data-zh="循环器">Looper</span><span class="chain-led" aria-hidden="true"></span>
+            <span class="chain-actions"><button type="button" class="move" data-move="up" aria-label="Move up" data-i18n-aria="board.moveUp"><svg><use href="#i-chev-up"/></svg></button><button type="button" class="move" data-move="down" aria-label="Move down" data-i18n-aria="board.moveDown"><svg><use href="#i-chev-down"/></svg></button></span>
+          </div>
+          <span class="chain-pulse" aria-hidden="true"></span>
+        </div>
+        <div class="card-foot">
+          <span data-i18n="board.chainHint">Drag a card or use ↑ ↓</span>
+          <button class="text-btn" type="button" id="resetChain" data-i18n="board.reset">Reset</button>
+        </div>
+        <p class="sr-only" id="chainStatus" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="first-six" aria-labelledby="sixTitle">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <p class="kicker" data-en="04 — First six" data-zh="04 — 先玩六个">04 — First six</p>
+        <h2 class="display" id="sixTitle"><span class="line" data-en="You do not need all 24 today." data-zh="今天不用把 24 个都学会。">You do not need all 24 today.</span></h2>
+        <p class="section-lead" data-en="Start with the effects that are easy to hear and hard to make sound bad. Each one below is also in the default chain or one menu away." data-zh="先从最容易听出区别、也最不容易调难听的效果开始。下面这些，要么已经在默认链路里，要么离你只有一个菜单。">Start with the effects that are easy to hear and hard to make sound bad. Each one below is also in the default chain or one menu away.</p>
+      </header>
+
+      <div class="starter-grid">
+        <article class="starter-card reveal">
+          <span class="fx-cat" data-en="DYNAMICS" data-zh="动态">DYNAMICS</span>
+          <h3 data-en="Noise Gate" data-zh="噪声门">Noise Gate</h3>
+          <p data-en="Shuts the hiss between phrases without cutting the pick." data-zh="句子之间关掉底噪，但不切掉拨弦。">Shuts the hiss between phrases without cutting the pick.</p>
+          <span class="tip" data-en="Tip: set Threshold just above the noise." data-zh="建议：Threshold 刚好高过底噪。">Tip: set Threshold just above the noise.</span>
+        </article>
+        <article class="starter-card reveal">
+          <span class="fx-cat" data-en="DYNAMICS" data-zh="动态">DYNAMICS</span>
+          <h3 data-en="Compressor" data-zh="压缩器">Compressor</h3>
+          <p data-en="Brings loud and soft picking closer together, so nothing disappears." data-zh="把重拨和轻拨拉近，让小声的细节不消失。">Brings loud and soft picking closer together, so nothing disappears.</p>
+          <span class="tip" data-en="Tip: Ratio 4:1 is a safe first stop." data-zh="建议：压缩比 4:1 是安全起点。">Tip: Ratio 4:1 is a safe first stop.</span>
+        </article>
+        <article class="starter-card reveal">
+          <span class="fx-cat" data-en="FILTER" data-zh="滤波">FILTER</span>
+          <h3 data-en="3-Band EQ" data-zh="三段均衡">3-Band EQ</h3>
+          <p data-en="Tames boom or harshness before it reaches the drive." data-zh="在进入失真之前，修掉闷或刺。">Tames boom or harshness before it reaches the drive.</p>
+          <span class="tip" data-en="Tip: move 2–3 dB, not 10." data-zh="建议：动 2–3 dB，不要一上来就 10 dB。">Tip: move 2–3 dB, not 10.</span>
+        </article>
+        <article class="starter-card reveal">
+          <span class="fx-cat" data-en="DRIVE" data-zh="失真">DRIVE</span>
+          <h3 data-en="Overdrive" data-zh="过载">Overdrive</h3>
+          <p data-en="A little grit while the guitar still sounds like your guitar." data-zh="加一点颗粒，但还听得出是你的琴。">A little grit while the guitar still sounds like your guitar.</p>
+          <span class="tip" data-en="Tip: start around Drive 35%." data-zh="建议：Drive 先从 35% 左右开始。">Tip: start around Drive 35%.</span>
+        </article>
+        <article class="starter-card reveal">
+          <span class="fx-cat" data-en="TIME" data-zh="时间">TIME</span>
+          <h3 data-en="Delay" data-zh="延迟">Delay</h3>
+          <p data-en="Adds repeats behind the note instead of on top of it." data-zh="在音符后面加回声，而不是盖在音符上。">Adds repeats behind the note instead of on top of it.</p>
+          <span class="tip" data-en="Tip: keep Mix under 25% at first." data-zh="建议：Mix 先控制在 25% 以内。">Tip: keep Mix under 25% at first.</span>
+        </article>
+        <article class="starter-card reveal">
+          <span class="fx-cat" data-en="TIME" data-zh="时间">TIME</span>
+          <h3 data-en="Reverb" data-zh="混响">Reverb</h3>
+          <p data-en="Puts the guitar in a room and glues the repeats together." data-zh="把吉他放进一个空间，也让回声更自然地连起来。">Puts the guitar in a room and glues the repeats together.</p>
+          <span class="tip" data-en="Tip: Mix 15–25% is usually enough." data-zh="建议：Mix 15–25% 通常就够了。">Tip: Mix 15–25% is usually enough.</span>
+        </article>
+      </div>
+      <div class="section-more reveal">
+        <a class="text-link" href="effects.html"><span data-en="See all 24 effect types" data-zh="查看全部 24 种效果">See all 24 effect types</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="record" aria-labelledby="recordTitle">
+    <div class="wrap">
+      <div class="aud-banner reveal">
+        <div>
+          <p class="kicker" data-en="05 — Record it" data-zh="05 — 录下来">05 — Record it</p>
+          <h2 id="recordTitle" data-en="Play it. Then record it." data-zh="弹完，顺手录下来。">Play it. Then record it.</h2>
+          <p class="section-lead" data-en="Audacity is free, open source, and runs on Windows. With PedalBoard's virtual output it can record exactly what you hear. Our tutorial covers the whole route, from CABLE to a finished MP3." data-zh="Audacity 免费、开源，Windows 能直接用。配合 PedalBoard 的虚拟输出，它录下的就是你听到的声音。教程从 CABLE 到导出 MP3，整条路都写好了。">Audacity is free, open source, and runs on Windows. With PedalBoard's virtual output it can record exactly what you hear. Our tutorial covers the whole route, from CABLE to a finished MP3.</p>
+          <div class="aud-points">
+            <span><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="Free and open source" data-zh="免费开源">Free and open source</span></span>
+            <span><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="Official download only" data-zh="只从官网下载">Official download only</span></span>
+            <span><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="Record, edit, export" data-zh="录音、剪辑、导出">Record, edit, export</span></span>
+            <span class="muted-note" data-en="Not bundled with PedalBoard." data-zh="不随 PedalBoard 分发。">Not bundled with PedalBoard.</span>
+          </div>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="audacity.html"><svg aria-hidden="true"><use href="#i-book"/></svg><span data-en="Audacity beginner tutorial" data-zh="Audacity 新手教程">Audacity beginner tutorial</span></a>
+            <a class="btn btn-ghost" href="https://www.audacityteam.org/" target="_blank" rel="noopener"><span>audacityteam.org</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </div>
+        <div class="aud-visual" aria-hidden="true">
+          <div class="aud-visual-top"><span>AUDACITY</span><span class="status-led"></span><span>48 kHz</span></div>
+          <svg class="aud-wave" viewBox="0 0 300 100" preserveAspectRatio="none">
+            <path d="M0 50 L8 50 L10 42 L12 58 L14 34 L16 66 L18 46 L22 54 L26 44 L28 56 L32 38 L34 62 L38 48 L42 52 L46 36 L48 64 L52 46 L56 54 L60 40 L64 60 L68 48 L72 52 L76 30 L78 70 L82 44 L86 56 L90 38 L94 62 L98 48 L102 52 L106 34 L110 66 L114 46 L118 54 L122 42 L126 58 L130 48 L136 50 L140 36 L142 64 L146 46 L150 54 L154 40 L158 60 L162 48 L166 52 L170 32 L172 68 L176 46 L180 54 L184 38 L188 62 L192 48 L196 52 L200 36 L204 64 L208 46 L212 54 L216 42 L220 58 L224 48 L228 52 L232 34 L236 66 L240 46 L244 54 L248 40 L252 60 L256 48 L260 52 L264 30 L268 70 L272 44 L276 56 L280 38 L284 62 L288 48 L292 52 L296 46 L300 50"/>
+            <path class="second" d="M0 54 L12 54 L16 48 L20 60 L26 50 L32 56 L40 46 L48 58 L56 50 L64 54 L72 44 L80 60 L88 50 L96 54 L104 46 L112 58 L120 50 L128 54 L136 48 L144 56 L152 50 L160 54 L168 44 L176 60 L184 50 L192 54 L200 46 L208 58 L216 50 L224 54 L232 42 L240 62 L248 50 L256 54 L264 46 L272 58 L280 50 L288 54 L300 50"/>
+          </svg>
+          <div class="aud-visual-foot"><span>Guitar take 01</span><b>STEREO</b><span>-6 dB</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section download" id="download" aria-labelledby="downloadTitle">
+    <div class="wrap">
+      <div class="download-panel reveal">
+        <div class="download-copy">
+          <p class="kicker" data-i18n="dl.kicker">DOWNLOAD</p>
+          <h2 class="display" id="downloadTitle" data-i18n="dl.title">Unzip it. Play.</h2>
+          <p class="section-lead" data-i18n="dl.lead">Windows 10/11 x64. Unzip, run, choose your language. No installer, no account, no telemetry.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://github.com/DengXiaoping8964/PedalBoard/releases/latest" target="_blank" rel="noopener">
+              <svg aria-hidden="true"><use href="#i-download"/></svg>
+              <span data-i18n="dl.primary">Download for Windows</span>
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/DengXiaoping8964/PedalBoard" target="_blank" rel="noopener">
+              <svg aria-hidden="true"><use href="#i-github"/></svg>
+              <span data-i18n="dl.secondary">View source</span>
+            </a>
+          </div>
+          <div class="dl-trust">
+            <span><svg aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="dl.trust1">No installer</span></span>
+            <span><svg aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="dl.trust2">No account</span></span>
+            <span><svg aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="dl.trust3">AGPLv3</span></span>
+          </div>
+          <p style="margin-top:18px"><a class="text-link" href="guide.html"><span data-i18n="dl.guideLink">Read the full setup guide</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
+        </div>
+
+        <aside class="release-card" aria-label="Release 1.0.0">
+          <div class="release-head">
+            <div>
+              <span class="release-eyebrow">PEDALBOARD</span>
+              <strong>v1.0.0</strong>
+            </div>
+            <span class="release-badge" data-i18n="dl.badge">LATEST</span>
+          </div>
+          <dl class="release-rows">
+            <div><dt data-i18n="dl.platformLabel">Platform</dt><dd data-i18n="dl.platformValue">Windows 10/11 x64</dd></div>
+            <div><dt data-i18n="dl.sizeLabel">Download</dt><dd data-i18n="dl.sizeValue">3.4 MB zip</dd></div>
+            <div><dt data-i18n="dl.licenseLabel">License</dt><dd>AGPLv3</dd></div>
+            <div><dt data-i18n="dl.buildLabel">Build</dt><dd data-i18n="dl.buildValue">Release · static CRT</dd></div>
+          </dl>
+          <div class="sha-block">
+            <span class="sha-label" data-i18n="dl.shaLabel">SHA-256</span>
+            <code id="shaText">31b66d88af4a92cf1708695a0715920<br>d8e55519b6b2c8fce55887ccf6593021b</code>
+            <button class="copy-btn" type="button" id="copySha" data-hash="31b66d88af4a92cf1708695a0715920d8e55519b6b2c8fce55887ccf6593021b" aria-label="Copy SHA-256 checksum" data-i18n-aria="dl.copyAria">
+              <svg aria-hidden="true"><use href="#i-copy"/></svg>
+              <span id="copyLabel" data-i18n="dl.copy">Copy</span>
+            </button>
+          </div>
+          <a class="release-checksum" href="https://github.com/DengXiaoping8964/PedalBoard/releases/download/v1.0.0/SHA256SUMS.txt" target="_blank" rel="noopener">SHA256SUMS.txt</a>
+        </aside>
+      </div>
+
+      <div class="download-steps">
+        <article class="step reveal">
+          <span class="step-num">01</span>
+          <h3 data-i18n="dl.step1t">Download</h3>
+          <p data-i18n="dl.step1d">Grab the zip from GitHub Releases.</p>
+        </article>
+        <article class="step reveal">
+          <span class="step-num">02</span>
+          <h3 data-i18n="dl.step2t">Unzip &amp; run</h3>
+          <p data-i18n="dl.step2d">Any simple path such as D:\PedalBoard. PedalBoard.exe is self-contained.</p>
+        </article>
+        <article class="step reveal">
+          <span class="step-num">03</span>
+          <h3 data-i18n="dl.step3t">Pick a language</h3>
+          <p data-i18n="dl.step3d">English or 中文, then open Devices and choose your input.</p>
+        </article>
+      </div>
+
+      <div class="download-notes reveal">
+        <div class="note-row"><svg aria-hidden="true"><use href="#i-alert"/></svg><p data-i18n="dl.note1">The exe is not code-signed, so SmartScreen may warn on first run: More info → Run anyway.</p></div>
+        <div class="note-row"><svg aria-hidden="true"><use href="#i-alert"/></svg><p data-i18n="dl.note2">Audacity and VB-CABLE are independent third-party software and are not bundled with PedalBoard.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="PedalBoard home" data-i18n-aria="nav.homeAria">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 34 34">
+              <rect x="2.5" y="11" width="8" height="12" rx="2.4"/>
+              <rect x="13" y="11" width="8" height="12" rx="2.4"/>
+              <rect x="23.5" y="11" width="8" height="12" rx="2.4"/>
+              <path d="M10.5 17h2.5M21 17h2.5"/>
+              <circle cx="8" cy="14.5" r="1.1" class="brand-led"/>
+            </svg>
+          </span>
+          <span class="brand-word">PedalBoard</span>
+        </a>
+        <p data-i18n="footer.tag">A Windows guitar pedalboard that opens ready to play. Free and open source.</p>
+        <p class="footer-built" data-i18n="footer.built">Built with C++ and JUCE 8.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h3 data-i18n="footer.site">Site</h3>
+          <a href="guide.html" data-i18n="nav.guide">Getting started</a>
+          <a href="effects.html" data-i18n="nav.effects">Effects</a>
+          <a href="audacity.html" data-i18n="nav.recording">Recording</a>
+          <a href="advanced.html" data-i18n="nav.advanced">Advanced</a>
+          <a href="index.html#download" data-i18n="nav.download">Download</a>
+        </div>
+        <div class="footer-col">
+          <h3 data-i18n="footer.project">Project</h3>
+          <a href="https://github.com/DengXiaoping8964/PedalBoard" target="_blank" rel="noopener" data-i18n="footer.source">Source code</a>
+          <a href="https://github.com/DengXiaoping8964/PedalBoard/releases" target="_blank" rel="noopener" data-i18n="footer.releases">Releases</a>
+          <a href="https://github.com/DengXiaoping8964/PedalBoard#readme" target="_blank" rel="noopener" data-i18n="footer.readme">Documentation</a>
+          <a href="https://github.com/DengXiaoping8964/PedalBoard/blob/main/LICENSE" target="_blank" rel="noopener" data-i18n="footer.license">AGPLv3 License</a>
+        </div>
+        <div class="footer-col">
+          <h3 data-i18n="footer.third">Third-party</h3>
+          <a href="https://www.audacityteam.org/" target="_blank" rel="noopener">Audacity</a>
+          <a href="https://manual.audacityteam.org/" target="_blank" rel="noopener">Audacity Manual</a>
+          <a href="https://vb-audio.com/Cable/" target="_blank" rel="noopener">VB-CABLE</a>
+          <a href="index.html#top" data-i18n="footer.top">Back to top</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-wordmark" aria-hidden="true">PEDALBOARD</div>
+    <div class="footer-bottom">
+      <span data-i18n="footer.rights">© 2026 PedalBoard.</span>
+      <span data-i18n="footer.note">Audacity and VB-CABLE are independent third-party software, not bundled with PedalBoard.</span>
+    </div>
+
+    <div class="footer-contact" id="contact">
+      <p class="footer-contact-kicker" data-i18n="footer.contactKicker">CONTACT</p>
+      <p class="footer-contact-title" data-i18n="footer.contactTitle">Questions, bugs, or a song you made?</p>
+      <p class="footer-contact-lead" data-i18n="footer.contactLead">Email me directly. I read every message.</p>
+      <a class="footer-email" href="mailto:a0966681154@gmail.com">a0966681154@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

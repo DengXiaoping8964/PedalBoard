@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Record PedalBoard with Audacity — beginner tutorial and official links</title>
+<meta name="description" content="A beginner tutorial for recording PedalBoard with Audacity on Windows: WASAPI, CABLE Output, levels, editing, noise reduction and export. Official Audacity links included.">
+<meta name="theme-color" content="#07080a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Record PedalBoard with Audacity — beginner tutorial">
+<meta property="og:description" content="From CABLE Output to a finished MP3: the complete beginner recording tutorial for PedalBoard and Audacity 4.">
+<meta property="og:image" content="assets/shots/aud-recording.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="pages.css">
+<script>try{document.documentElement.classList.add('js')}catch(e){}</script>
+</head>
+<body data-title-en="Record PedalBoard with Audacity — beginner tutorial and official links" data-title-zh="用 Audacity 录 PedalBoard — 新手教程与官网链接" data-desc-en="A beginner tutorial for recording PedalBoard with Audacity on Windows: WASAPI, CABLE Output, levels, editing, noise reduction and export." data-desc-zh="PedalBoard + Audacity 的 Windows 录音新手指南：WASAPI、CABLE Output、电平、剪辑、降噪和导出。">
+<a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-github" viewBox="0 0 24 24"><path d="M12 .8a11.2 11.2 0 0 0-3.5 21.8c.6.1.8-.3.8-.6v-2c-3.1.7-3.8-1.3-3.8-1.3-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 .1 1.7-.8 2.1-1.2.1-.7.4-1.2.7-1.5-2.5-.3-5.1-1.2-5.1-5.5 0-1.2.4-2.2 1.1-3-.1-.3-.5-1.4.1-2.9 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.5.2 2.6.1 2.9.7.8 1.1 1.8 1.1 3 0 4.3-2.6 5.2-5.1 5.5.4.3.7 1 .7 2v3c0 .3.2.7.8.6A11.2 11.2 0 0 0 12 .8z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v11M7 10l5 5 5-5"/><path d="M4 20h16"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 19L19 5M9 5h10v10"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l9 17H3L12 3z"/><path d="M12 9v5M12 17.2v.1"/></symbol>
+  <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="13" width="4" height="7" rx="1.6"/><rect x="18" y="13" width="4" height="7" rx="1.6"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-12 0V8z"/><path d="M12 17v4"/></symbol>
+  <symbol id="i-jack" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-split" viewBox="0 0 24 24"><path d="M3 12h7l5-6h6M10 12l5 6h6"/><circle cx="21" cy="6" r="1.6"/><circle cx="21" cy="18" r="1.6"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 3 3v13a3 3 0 0 0-3-3H4V4z"/><path d="M20 4h-4a3 3 0 0 0-3 3v13a3 3 0 0 1 3-3h4V4z"/></symbol>
+  <symbol id="i-record" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-window" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></symbol>
+</svg>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html" aria-label="PedalBoard home" data-i18n-aria="nav.homeAria"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 34 34"><rect x="2.5" y="11" width="8" height="12" rx="2.4"/><rect x="13" y="11" width="8" height="12" rx="2.4"/><rect x="23.5" y="11" width="8" height="12" rx="2.4"/><path d="M10.5 17h2.5M21 17h2.5"/><circle cx="8" cy="14.5" r="1.1" class="brand-led"/></svg></span><span class="brand-word">PedalBoard</span></a>
+    <nav class="primary-nav" id="primaryNav" aria-label="Primary">
+      <a href="guide.html" data-i18n="nav.guide">Getting started</a>
+      <a href="effects.html" data-i18n="nav.effects">Effects</a>
+      <a href="audacity.html" class="is-active" aria-current="page" data-i18n="nav.recording">Recording</a>
+      <a href="advanced.html" data-i18n="nav.advanced">Advanced</a>
+      <a href="index.html#download" data-i18n="nav.download">Download</a>
+    </nav>
+    <div class="header-actions">
+      <div class="lang-switch" role="group" aria-label="Language" data-i18n-aria="nav.language">
+        <button class="lang-btn" type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button class="lang-btn" type="button" data-lang="zh" aria-pressed="false">中文</button>
+      </div>
+      <a class="icon-link" href="https://github.com/DengXiaoping8964/PedalBoard" target="_blank" rel="noopener" aria-label="Open PedalBoard on GitHub" data-i18n-aria="nav.githubAria"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
+      <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Open menu" data-i18n-aria="nav.menu"><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="lang-gate" id="langGate" hidden>
+  <div class="lang-gate-card" role="dialog" aria-modal="true" aria-labelledby="langGateTitle" aria-describedby="langGateLead">
+    <p class="lang-gate-kicker" data-i18n="gate.kicker">FIRST VISIT</p>
+    <h2 id="langGateTitle" data-i18n="gate.title">Choose your language</h2>
+    <p id="langGateLead" data-i18n="gate.lead">PedalBoard has a full English and Chinese interface. Pick one now — you can switch it in the header at any time.</p>
+    <div class="lang-gate-actions">
+      <button class="lang-choice" type="button" data-gate-lang="zh"><span class="lang-choice-word">中文</span><span class="lang-choice-note" data-i18n="gate.zhNote">完整中文界面</span></button>
+      <button class="lang-choice" type="button" data-gate-lang="en"><span class="lang-choice-word">English</span><span class="lang-choice-note" data-i18n="gate.enNote">Full English interface</span></button>
+    </div>
+    <button class="lang-gate-skip" type="button" data-gate-skip data-i18n="gate.skip">Continue with the detected language</button>
+  </div>
+</div>
+
+<main id="main">
+  <section class="page-hero aud-hero" aria-labelledby="audTitle">
+    <div class="wrap page-hero-inner">
+      <div>
+        <div class="crumbs"><a href="index.html" data-en="Home" data-zh="首页">Home</a><i>/</i><span data-en="Recording" data-zh="录音教程">Recording</span></div>
+        <p class="kicker" data-en="AUDACITY BEGINNER GUIDE" data-zh="AUDACITY 新手教程">AUDACITY BEGINNER GUIDE</p>
+        <h1 id="audTitle"><span class="line" data-en="Record what" data-zh="把听到的">Record what</span><span class="line accent" data-en="you hear." data-zh="录下来。">you hear.</span></h1>
+        <p class="page-lead" data-en="PedalBoard can send its processed guitar to a virtual output. Audacity can record that output, clean it up and export a WAV or MP3. This guide covers the whole route on Windows, with actual Audacity 4 screenshots." data-zh="PedalBoard 可以把处理后的吉他送到虚拟输出，Audacity 可以录下它、修整并导出 WAV 或 MP3。这份教程覆盖 Windows 上的整条路，并配 Audacity 4 的实际界面图。">PedalBoard can send its processed guitar to a virtual output. Audacity can record that output, clean it up and export a WAV or MP3. This guide covers the whole route on Windows, with actual Audacity 4 screenshots.</p>
+        <div class="page-tags">
+          <span class="page-tag"><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="Free and open source" data-zh="免费开源">Free and open source</span></span>
+          <span class="page-tag"><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="Windows WASAPI" data-zh="Windows WASAPI">Windows WASAPI</span></span>
+          <span class="page-tag"><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="Audacity 4 screenshots" data-zh="Audacity 4 实拍">Audacity 4 screenshots</span></span>
+          <span class="page-tag"><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="Official links" data-zh="官方链接">Official links</span></span>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://www.audacityteam.org/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-download"/></svg><span data-en="Official Audacity website" data-zh="Audacity 官网">Official Audacity website</span></a>
+          <a class="btn btn-ghost" href="#steps"><span data-en="Jump to the tutorial" data-zh="直接看教程">Jump to the tutorial</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+      <aside class="official-card" aria-label="Official Audacity links" data-en-aria="Official Audacity links" data-zh-aria="Audacity 官方链接">
+        <span class="official-kicker" data-en="OFFICIAL WEBSITE" data-zh="官方网站">OFFICIAL WEBSITE</span>
+        <strong class="official-name">Audacity</strong>
+        <a class="official-url" href="https://www.audacityteam.org/" target="_blank" rel="noopener">https://www.audacityteam.org/</a>
+        <div class="official-actions">
+          <a class="btn btn-primary" href="https://www.audacityteam.org/download/windows/" target="_blank" rel="noopener"><span data-en="Download" data-zh="下载">Download</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-ghost" href="https://www.audacityteam.org/manual/" target="_blank" rel="noopener"><span data-en="Manual" data-zh="手册">Manual</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+        <p class="official-note" data-en="Audacity 4.x is a separate open-source project. It is not bundled with PedalBoard. Download it only from audacityteam.org." data-zh="Audacity 4.x 是独立的开源项目，不随 PedalBoard 分发。请只从 audacityteam.org 下载。">Audacity 4.x is a separate open-source project. It is not bundled with PedalBoard. Download it only from audacityteam.org.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="whyTitle">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <p class="kicker" data-en="01 — WHY AUDACITY" data-zh="01 — 为什么是 AUDACITY">01 — WHY AUDACITY</p>
+        <h2 class="display" id="whyTitle"><span class="line" data-en="Free, official, enough." data-zh="免费、正规、够用。">Free, official, enough.</span></h2>
+        <p class="section-lead" data-en="You do not need a full DAW to record a guitar take. Audacity records, edits, cleans and exports, and it runs on Windows, macOS and Linux." data-zh="录一条吉他不需要完整宿主。Audacity 能录、能剪、能修、能导出，Windows、macOS、Linux 都能用。">You do not need a full DAW to record a guitar take. Audacity records, edits, cleans and exports, and it runs on Windows, macOS and Linux.</p>
+      </header>
+      <div class="feature-grid">
+        <article class="feature-card reveal">
+          <span class="card-label" data-en="OPEN SOURCE" data-zh="开源">OPEN SOURCE</span>
+          <h3 data-en="No licence, no account." data-zh="不用授权，不用账号。">No licence, no account.</h3>
+          <p data-en="Audacity is free software. Download it from the official site; there is no subscription and no login." data-zh="Audacity 是自由软件。从官网下载，没有订阅，也不用登录。">Audacity is free software. Download it from the official site; there is no subscription and no login.</p>
+        </article>
+        <article class="feature-card reveal">
+          <span class="card-label" data-en="RECORD → EDIT → EXPORT" data-zh="录音 → 剪辑 → 导出">RECORD → EDIT → EXPORT</span>
+          <h3 data-en="One app for the whole take." data-zh="一条龙做完一条音轨。">One app for the whole take.</h3>
+          <p data-en="Record, trim, normalize, reduce noise, fade and export. The same project can become a WAV archive and an MP3 for sharing." data-zh="录音、裁剪、标准化、降噪、淡入淡出和导出。同一个项目既能存 WAV 存档，也能导 MP3 分享。">Record, trim, normalize, reduce noise, fade and export. The same project can become a WAV archive and an MP3 for sharing.</p>
+        </article>
+        <article class="feature-card reveal">
+          <span class="card-label" data-en="OFFICIAL ONLY" data-zh="只认官网">OFFICIAL ONLY</span>
+          <h3 data-en="Download from audacityteam.org." data-zh="从 audacityteam.org 下载。">Download from audacityteam.org.</h3>
+          <p data-en="Avoid third-party mirrors and ad-wrapped installers. The official site also hosts the manual and the current release notes." data-zh="避开第三方下载站和带广告的安装器。官网同时提供手册和当前版本说明。">Avoid third-party mirrors and ad-wrapped installers. The official site also hosts the manual and the current release notes.</p>
+        </article>
+        <article class="feature-card reveal">
+          <span class="card-label" data-en="SEPARATE FROM PEDALBOARD" data-zh="与 PEDALBOARD 独立">SEPARATE FROM PEDALBOARD</span>
+          <h3 data-en="Two programs, one route." data-zh="两个软件，一条路由。">Two programs, one route.</h3>
+          <p data-en="PedalBoard makes the sound; Audacity records it. Neither one installs the other, and VB-CABLE is a third piece you install separately." data-zh="PedalBoard 负责声音，Audacity 负责录下来。两者互不安装，VB-CABLE 是另外单独安装的第三块。">PedalBoard makes the sound; Audacity records it. Neither one installs the other, and VB-CABLE is a third piece you install separately.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="routeTitle">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <p class="kicker" data-en="02 — THE ROUTE" data-zh="02 — 信号怎么走">02 — THE ROUTE</p>
+        <h2 class="display" id="routeTitle"><span class="line" data-en="Guitar in." data-zh="吉他进，">Guitar in.</span><span class="line" data-en="Two paths out." data-zh="两路出。">Two paths out.</span></h2>
+        <p class="section-lead" data-en="You monitor through headphones or an interface, and the same processed signal goes to CABLE. Audacity records CABLE Output, so the take includes every effect you hear." data-zh="你用耳机或声卡监听，同时同一路处理后的信号送到 CABLE。Audacity 录 CABLE Output，所以听到的效果都会进录音。">You monitor through headphones or an interface, and the same processed signal goes to CABLE. Audacity records CABLE Output, so the take includes every effect you hear.</p>
+      </header>
+      <div class="aud-flow reveal">
+        <div class="flow-node">
+          <span class="flow-icon"><svg aria-hidden="true"><use href="#i-jack"/></svg></span>
+          <span class="flow-kicker" data-en="INPUT" data-zh="输入">INPUT</span>
+          <strong data-en="Guitar → audio interface." data-zh="吉他 → 声卡。">Guitar → audio interface.</strong>
+        </div>
+        <div class="flow-line" aria-hidden="true"><span></span></div>
+        <div class="flow-node is-chain">
+          <span class="flow-icon"><svg aria-hidden="true"><use href="#i-plug"/></svg></span>
+          <span class="flow-kicker">PEDALBOARD</span>
+          <strong data-en="The 16-slot chain, all effects applied." data-zh="16 槽链路，所有效果都算进去。">The 16-slot chain, all effects applied.</strong>
+          <span class="flow-slots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="flow-line is-split" aria-hidden="true"><span></span></div>
+        <div class="flow-outs">
+          <div class="flow-node is-out">
+            <span class="flow-icon"><svg aria-hidden="true"><use href="#i-headphones"/></svg></span>
+            <span class="flow-kicker" data-en="MONITOR" data-zh="监听">MONITOR</span>
+            <strong data-en="Headphones / interface. What you play to." data-zh="耳机 / 声卡。你演奏时听的。">Headphones / interface. What you play to.</strong>
+          </div>
+          <div class="flow-node is-out is-virtual">
+            <span class="flow-icon"><svg aria-hidden="true"><use href="#i-split"/></svg></span>
+            <span class="flow-kicker">CABLE → AUDACITY</span>
+            <strong data-en="CABLE Output becomes Audacity's recording device." data-zh="CABLE Output 成为 Audacity 的录音设备。">CABLE Output becomes Audacity's recording device.</strong>
+          </div>
+        </div>
+      </div>
+      <p class="flow-note" data-en="VB-CABLE is Donationware by Vincent Burel and is not bundled with PedalBoard. Install it from vb-audio.com/Cable; reboot Windows after installation." data-zh="VB-CABLE 是 Vincent Burel 的 Donationware，不随 PedalBoard 分发。请从 vb-audio.com/Cable 安装，装完重启 Windows。">VB-CABLE is Donationware by Vincent Burel and is not bundled with PedalBoard. Install it from vb-audio.com/Cable; reboot Windows after installation.</p>
+    </div>
+  </section>
+
+  <section class="section" id="steps" aria-labelledby="stepsTitle">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <p class="kicker" data-en="03 — STEP BY STEP" data-zh="03 — 一步步来">03 — STEP BY STEP</p>
+        <h2 class="display" id="stepsTitle"><span class="line" data-en="From setup" data-zh="从设置">From setup</span><span class="line" data-en="to exported MP3." data-zh="到导出 MP3。">to exported MP3.</span></h2>
+        <p class="section-lead" data-en="The screenshots below are from the official Audacity 4 manual and show the actual Audacity 4 interface. Menu names in a future version may move; the audio route stays the same." data-zh="下面的截图来自 Audacity 官方 4.0 手册，展示的是 Audacity 4 实际界面。未来版本的菜单位置可能变化；音频路由不变。">The screenshots below are from the official Audacity 4 manual and show the actual Audacity 4 interface. Menu names in a future version may move; the audio route stays the same.</p>
+      </header>
+
+      <div class="guide-layout">
+        <aside class="guide-toc" aria-label="Recording tutorial contents" data-en-aria="Recording tutorial contents" data-zh-aria="录音教程目录">
+          <h2 data-en="Contents" data-zh="目录">Contents</h2>
+          <ol>
+            <li><a href="#prepare" data-en="1. Prepare" data-zh="1. 准备">1. Prepare</a></li>
+            <li><a href="#pedalboard" data-en="2. PedalBoard output" data-zh="2. PedalBoard 输出">2. PedalBoard output</a></li>
+            <li><a href="#audacity-setup" data-en="3. Audacity setup" data-zh="3. Audacity 设置">3. Audacity setup</a></li>
+            <li><a href="#level" data-en="4. Level" data-zh="4. 电平">4. Level</a></li>
+            <li><a href="#record" data-en="5. Record" data-zh="5. 录音">5. Record</a></li>
+            <li><a href="#edit" data-en="6. Edit" data-zh="6. 剪辑与修整">6. Edit</a></li>
+            <li><a href="#export" data-en="7. Export" data-zh="7. 导出">7. Export</a></li>
+            <li><a href="#cheat" data-en="8. Cheat sheet" data-zh="8. 速查表">8. Cheat sheet</a></li>
+            <li><a href="#trouble" data-en="9. Troubleshooting" data-zh="9. 故障排查">9. Troubleshooting</a></li>
+            <li><a href="#links" data-en="10. Official links" data-zh="10. 官方链接">10. Official links</a></li>
+          </ol>
+        </aside>
+
+        <div class="guide-body">
+          <section class="guide-section" id="prepare">
+            <p class="kicker" data-en="1 — PREPARE" data-zh="1 — 准备">1 — PREPARE</p>
+            <h2 data-en="Three pieces, installed separately." data-zh="三样东西，分别安装。">Three pieces, installed separately.</h2>
+            <p data-en="PedalBoard, Audacity and VB-CABLE are independent programs. PedalBoard never downloads or installs the other two. Install them yourself, from their official sites." data-zh="PedalBoard、Audacity 和 VB-CABLE 是三个独立软件。PedalBoard 不会下载或安装另外两个。请从各自的官网自行安装。">PedalBoard, Audacity and VB-CABLE are independent programs. PedalBoard never downloads or installs the other two. Install them yourself, from their official sites.</p>
+            <ul class="checklist">
+              <li><span data-en="PedalBoard 1.0.0 installed and producing sound through your headphones or interface." data-zh="PedalBoard 1.0.0 已安装，并且耳机或声卡里能听到声音。">PedalBoard 1.0.0 installed and producing sound through your headphones or interface.</span></li>
+              <li><span data-en="Audacity installed from audacityteam.org (current 4.x line)." data-zh="从 audacityteam.org 安装 Audacity（当前 4.x）。">Audacity installed from audacityteam.org (current 4.x line).</span></li>
+              <li><span data-en="VB-CABLE installed from vb-audio.com/Cable, then Windows restarted." data-zh="从 vb-audio.com/Cable 安装 VB-CABLE，然后重启 Windows。">VB-CABLE installed from vb-audio.com/Cable, then Windows restarted.</span></li>
+              <li><span data-en="Headphones. Speakers plus an open microphone will feed back." data-zh="耳机。音箱加开着的麦克风会啸叫。">Headphones. Speakers plus an open microphone will feed back.</span></li>
+            </ul>
+            <div class="callout is-warn">
+              <svg aria-hidden="true"><use href="#i-alert"/></svg>
+              <div>
+                <strong data-en="Only use the official Audacity site." data-zh="Audacity 只从官网下载。">Only use the official Audacity site.</strong>
+                <p data-en="Third-party download pages often wrap the installer with ads or extra software. The official URL is https://www.audacityteam.org/ — the download page is /download/windows/ and the manual is /manual/." data-zh="第三方下载页常把安装器套上广告或捆绑软件。官方网址是 https://www.audacityteam.org/ ，下载页是 /download/windows/，手册是 /manual/。">Third-party download pages often wrap the installer with ads or extra software. The official URL is https://www.audacityteam.org/ — the download page is /download/windows/ and the manual is /manual/.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="guide-section" id="pedalboard">
+            <p class="kicker" data-en="2 — PEDALBOARD OUTPUT" data-zh="2 — PEDALBOARD 输出">2 — PEDALBOARD OUTPUT</p>
+            <h2 data-en="Monitor on one path, record on the other." data-zh="一路监听，一路录音。">Monitor on one path, record on the other.</h2>
+            <p data-en="In PedalBoard, open Devices and confirm that the monitor device is your headphones or interface. Turn VIRTUAL OUT on. The CABLE meter should move when you play, and the MONITOR meter should move at the same time." data-zh="在 PedalBoard 里打开「音频设备」，确认监听设备是耳机或声卡，打开「虚拟输出」。弹琴时 CABLE 表应该动，MONITOR 表同时也动。">In PedalBoard, open Devices and confirm that the monitor device is your headphones or interface. Turn VIRTUAL OUT on. The CABLE meter should move when you play, and the MONITOR meter should move at the same time.</p>
+            <figure class="shot-figure">
+              <div class="shot-frame">
+                <img class="shot-zh" src="assets/shots/pb-devices-zh.png" alt="PedalBoard Audio devices panel with virtual output enabled" loading="lazy">
+                <img class="shot-en" src="assets/shots/pb-devices-en.png" alt="PedalBoard Audio devices panel with virtual output enabled" loading="lazy">
+                <span class="shot-badge"><i></i><span data-en="ACTUAL UI" data-zh="真实界面">ACTUAL UI</span></span>
+                <span class="shot-pin" style="left:52%;top:32.2%">1</span>
+                <span class="shot-pin is-mint" style="left:57%;top:45.4%">2</span>
+              </div>
+              <figcaption class="shot-caption">
+                <div><b data-en="PedalBoard: devices and virtual output" data-zh="PedalBoard：设备与虚拟输出">PedalBoard: devices and virtual output</b><span data-en="The monitor device is what you hear. VIRTUAL OUT feeds CABLE Input, which Audacity reads from CABLE Output." data-zh="监听设备是你听到的声音。虚拟输出送往 CABLE Input，Audacity 从 CABLE Output 读。">The monitor device is what you hear. VIRTUAL OUT feeds CABLE Input, which Audacity reads from CABLE Output.</span></div>
+                <div class="shot-source">PedalBoard v1.0.0 · actual app capture</div>
+              </figcaption>
+            </figure>
+            <div class="shot-legend">
+              <span><i>1</i><span data-en="Monitor device: headphones or interface output." data-zh="监听设备：耳机或声卡输出。">Monitor device: headphones or interface output.</span></span>
+              <span><i class="is-mint">2</i><span data-en="VIRTUAL OUT must be on for the CABLE path to run." data-zh="虚拟输出必须打开，CABLE 路径才会工作。">VIRTUAL OUT must be on for the CABLE path to run.</span></span>
+            </div>
+            <div class="callout">
+              <svg aria-hidden="true"><use href="#i-check"/></svg>
+              <div>
+                <strong data-en="Do not select CABLE for monitoring." data-zh="监听不要选 CABLE。">Do not select CABLE for monitoring.</strong>
+                <p data-en="CABLE is the recording path. If you monitor through it, you add latency and you may hear nothing. Monitor through the interface and let Audacity take CABLE Output." data-zh="CABLE 是录音路径。用它监听会增加延迟，甚至听不到。监听走声卡，CABLE Output 留给 Audacity。">CABLE is the recording path. If you monitor through it, you add latency and you may hear nothing. Monitor through the interface and let Audacity take CABLE Output.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="guide-section" id="audacity-setup">
+            <p class="kicker" data-en="3 — AUDACITY SETUP" data-zh="3 — AUDACITY 设置">3 — AUDACITY SETUP</p>
+            <h2 data-en="Host: Windows WASAPI. Device: CABLE Output." data-zh="Host 选 Windows WASAPI，设备选 CABLE Output。">Host: Windows WASAPI. Device: CABLE Output.</h2>
+            <p data-en="Open Audacity. In Audacity 4 the audio controls live under Audio setup in the top toolbar. You can pick the host and the recording device directly from this menu, or open Audio settings for the full panel." data-zh="打开 Audacity。在 Audacity 4 里，音频控制在顶部的 Audio setup 菜单。可以直接在这里选 Host 和录音设备，也可以打开 Audio settings 看完整面板。">Open Audacity. In Audacity 4 the audio controls live under Audio setup in the top toolbar. You can pick the host and the recording device directly from this menu, or open Audio settings for the full panel.</p>
+
+            <figure class="shot-figure">
+              <div class="shot-frame">
+                <img src="assets/shots/aud-audio-setup.jpg" alt="Audacity 4 Audio setup menu showing Host, Playback device, Recording device, Recording channels, Rescan audio devices and Audio settings" loading="lazy">
+                <span class="shot-badge"><i></i><span data-en="ACTUAL AUDACITY 4 UI" data-zh="AUDACITY 4 实际界面">ACTUAL AUDACITY 4 UI</span></span>
+                <span class="shot-pin" style="left:50%;top:14.5%">1</span>
+                <span class="shot-pin" style="left:55%;top:25.5%">2</span>
+                <span class="shot-pin" style="left:55%;top:32%">3</span>
+                <span class="shot-pin is-mint" style="left:55%;top:48.5%">4</span>
+              </div>
+              <figcaption class="shot-caption">
+                <div><b data-en="The Audio setup menu in Audacity 4" data-zh="Audacity 4 的 Audio setup 菜单">The Audio setup menu in Audacity 4</b><span data-en="The same menu exists on Windows. Choose the host first, then the device." data-zh="Windows 上也是这个菜单。先选 Host，再选设备。">The same menu exists on Windows. Choose the host first, then the device.</span></div>
+                <div class="shot-source">Screenshot: <a href="https://www.audacityteam.org/manual/getting-started/connect-your-microphone" target="_blank" rel="noopener">official Audacity 4 manual</a></div>
+              </figcaption>
+            </figure>
+            <div class="shot-legend">
+              <span><i>1</i><span data-en="Host. On Windows choose Windows WASAPI." data-zh="Host。Windows 上选 Windows WASAPI。">Host. On Windows choose Windows WASAPI.</span></span>
+              <span><i>2</i><span data-en="Recording device. Choose CABLE Output (VB-Audio Virtual Cable)." data-zh="录音设备。选 CABLE Output (VB-Audio Virtual Cable)。">Recording device. Choose CABLE Output (VB-Audio Virtual Cable).</span></span>
+              <span><i>3</i><span data-en="Recording channels. Choose 2 (Stereo)." data-zh="录音声道。选 2（立体声）。">Recording channels. Choose 2 (Stereo).</span></span>
+              <span><i class="is-mint">4</i><span data-en="Audio settings opens the full device panel and sample-rate options." data-zh="Audio settings 打开完整设备面板和采样率选项。">Audio settings opens the full device panel and sample-rate options.</span></span>
+            </div>
+
+            <div class="guide-step">
+              <span class="guide-step-num">01</span>
+              <div class="guide-step-body">
+                <h3 data-en="Set the host to Windows WASAPI" data-zh="把 Host 设为 Windows WASAPI">Set the host to Windows WASAPI</h3>
+                <p data-en="Audio setup → Host → Windows WASAPI. WASAPI is the modern Windows path and the one that sees CABLE Output with the least latency. MME works as a fallback but is slower." data-zh="Audio setup → Host → Windows WASAPI。WASAPI 是较新的 Windows 路径，看到 CABLE Output 的延迟也最低。MME 可以作为备选，但更慢。">Audio setup → Host → Windows WASAPI. WASAPI is the modern Windows path and the one that sees CABLE Output with the least latency. MME works as a fallback but is slower.</p>
+              </div>
+            </div>
+            <div class="guide-step">
+              <span class="guide-step-num">02</span>
+              <div class="guide-step-body">
+                <h3 data-en="Choose CABLE Output as the recording device" data-zh="录音设备选 CABLE Output">Choose CABLE Output as the recording device</h3>
+                <p data-en="Audio setup → Recording device → CABLE Output (VB-Audio Virtual Cable). If it is not in the list, click Rescan audio devices. The device only appears after VB-CABLE has been installed and Windows restarted." data-zh="Audio setup → Recording device → CABLE Output (VB-Audio Virtual Cable)。列表里没有就点 Rescan audio devices。这个设备只有在 VB-CABLE 安装并重启 Windows 后才会出现。">Audio setup → Recording device → CABLE Output (VB-Audio Virtual Cable). If it is not in the list, click Rescan audio devices. The device only appears after VB-CABLE has been installed and Windows restarted.</p>
+              </div>
+            </div>
+            <div class="guide-step">
+              <span class="guide-step-num">03</span>
+              <div class="guide-step-body">
+                <h3 data-en="Set two channels and 48 kHz" data-zh="设成双声道和 48 kHz">Set two channels and 48 kHz</h3>
+                <p data-en="Audio setup → Recording channels → 2 (Stereo). Open Audio settings and set the project/sample rate to 48000 Hz, matching PedalBoard. If the panel offers no project-rate control, set the export sample rate to 48000 Hz later." data-zh="Audio setup → Recording channels → 2（立体声）。打开 Audio settings，把项目/采样率设为 48000 Hz，与 PedalBoard 一致。如果面板里没有项目采样率选项，导出时再选 48000 Hz。">Audio setup → Recording channels → 2 (Stereo). Open Audio settings and set the project/sample rate to 48000 Hz, matching PedalBoard. If the panel offers no project-rate control, set the export sample rate to 48000 Hz later.</p>
+              </div>
+            </div>
+
+            <figure class="shot-figure">
+              <div class="shot-frame">
+                <img src="assets/shots/aud-channels.jpg" alt="Audacity 4 Recording channels submenu with 1 mono and 2 stereo options" loading="lazy">
+                <span class="shot-badge"><i></i><span data-en="ACTUAL AUDACITY 4 UI" data-zh="AUDACITY 4 实际界面">ACTUAL AUDACITY 4 UI</span></span>
+                <span class="shot-pin" style="left:55%;top:32%">1</span>
+                <span class="shot-pin is-mint" style="left:69%;top:41.5%">2</span>
+              </div>
+              <figcaption class="shot-caption">
+                <div><b data-en="Recording channels" data-zh="录音声道">Recording channels</b><span data-en="CABLE carries PedalBoard's stereo output, so two channels preserve the width of stereo effects." data-zh="CABLE 承载 PedalBoard 的立体声输出，选双声道才能保留立体声效果的宽度。">CABLE carries PedalBoard's stereo output, so two channels preserve the width of stereo effects.</span></div>
+                <div class="shot-source">Screenshot: <a href="https://www.audacityteam.org/manual/getting-started/connect-your-microphone" target="_blank" rel="noopener">official Audacity 4 manual</a></div>
+              </figcaption>
+            </figure>
+            <div class="shot-legend">
+              <span><i>1</i><span data-en="Recording channels submenu." data-zh="录音声道子菜单。">Recording channels submenu.</span></span>
+              <span><i class="is-mint">2</i><span data-en="Choose 2 (Stereo) for PedalBoard's CABLE output." data-zh="PedalBoard 的 CABLE 输出请选 2（立体声）。">Choose 2 (Stereo) for PedalBoard's CABLE output.</span></span>
+            </div>
+          </section>
+
+          <section class="guide-section" id="level">
+            <p class="kicker" data-en="4 — LEVEL" data-zh="4 — 电平">4 — LEVEL</p>
+            <h2 data-en="Move the meter, not the knob first." data-zh="先看表，再动旋钮。">Move the meter, not the knob first.</h2>
+            <p data-en="The recording path has its own level. Play your loudest part and watch Audacity's recording meter; aim for peaks around −12 to −6 dBFS. If it stays near −60, the CABLE signal is not arriving; if it touches 0, it is clipping." data-zh="录音路径有自己的电平。弹最响的部分，看 Audacity 的录音表；峰值目标在 −12 到 −6 dBFS。如果一直在 −60 附近，就是 CABLE 没信号；如果顶到 0，就是削波。">The recording path has its own level. Play your loudest part and watch Audacity's recording meter; aim for peaks around −12 to −6 dBFS. If it stays near −60, the CABLE signal is not arriving; if it touches 0, it is clipping.</p>
+            <figure class="shot-figure">
+              <div class="shot-frame">
+                <img src="assets/shots/aud-record-level.jpg" alt="Audacity 4 microphone level panel with input monitoring and metering options" loading="lazy">
+                <span class="shot-badge"><i></i><span data-en="ACTUAL AUDACITY 4 UI" data-zh="AUDACITY 4 实际界面">ACTUAL AUDACITY 4 UI</span></span>
+                <span class="shot-pin" style="left:50%;top:37.5%">1</span>
+                <span class="shot-pin" style="left:37%;top:64.5%">2</span>
+                <span class="shot-pin is-mint" style="left:20%;top:74%">3</span>
+              </div>
+              <figcaption class="shot-caption">
+                <div><b data-en="The recording level panel" data-zh="录音电平面板">The recording level panel</b><span data-en="The screenshot is from a microphone setup; with CABLE Output the same meter shows PedalBoard's level." data-zh="截图来自麦克风场景；选 CABLE Output 后，同一个表显示的就是 PedalBoard 的电平。">The screenshot is from a microphone setup; with CABLE Output the same meter shows PedalBoard's level.</span></div>
+                <div class="shot-source">Screenshot: <a href="https://www.audacityteam.org/manual/getting-started/connect-your-microphone" target="_blank" rel="noopener">official Audacity 4 manual</a></div>
+              </figcaption>
+            </figure>
+            <div class="shot-legend">
+              <span><i>1</i><span data-en="Level meter: peaks around −12 to −6 dBFS are healthy." data-zh="电平表：峰值在 −12 到 −6 dBFS 左右最稳。">Level meter: peaks around −12 to −6 dBFS are healthy.</span></span>
+              <span><i>2</i><span data-en="Leave input monitoring off; you already monitor through PedalBoard or the interface." data-zh="输入监听保持关闭；你已经通过 PedalBoard 或声卡监听了。">Leave input monitoring off; you already monitor through PedalBoard or the interface.</span></span>
+              <span><i class="is-mint">3</i><span data-en="Show mic metering when not recording helps you set the level before pressing Record." data-zh="「不录音时显示电平」能让你在按录音前先调好电平。">Show mic metering when not recording helps you set the level before pressing Record.</span></span>
+            </div>
+            <div class="callout is-warn">
+              <svg aria-hidden="true"><use href="#i-alert"/></svg>
+              <div>
+                <strong data-en="Use headphones." data-zh="戴耳机。">Use headphones.</strong>
+                <p data-en="If speakers play the guitar while the interface microphone or guitar pickup is open, you will record the room and create feedback. Headphones remove that loop entirely." data-zh="音箱在放吉他，而声卡麦克风或吉他拾音器又开着，就会录进房间声并产生啸叫。戴耳机直接断开这个循环。">If speakers play the guitar while the interface microphone or guitar pickup is open, you will record the room and create feedback. Headphones remove that loop entirely.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="guide-section" id="record">
+            <p class="kicker" data-en="5 — RECORD" data-zh="5 — 录音">5 — RECORD</p>
+            <h2 data-en="Arm, play, stop." data-zh="准备好，弹，停。">Arm, play, stop.</h2>
+            <ol>
+              <li data-en="Click the red Record button. Audacity creates a new track and starts moving the playhead." data-zh="点红色录音键。Audacity 会新建一轨并开始走播放头。">Click the red Record button. Audacity creates a new track and starts moving the playhead.</li>
+              <li data-en="Wait a second of silence, then play. The silence gives you room to trim the start cleanly." data-zh="先留一秒安静，再开始弹。这一秒方便后面干净地裁掉开头。">Wait a second of silence, then play. The silence gives you room to trim the start cleanly.</li>
+              <li data-en="Press Stop (space bar) when the take is done. Do not press Record again unless you want a second take on the same track." data-zh="弹完按停止（空格）。不要在同一个音轨上再按录音，除非你就是要录第二条。">Press Stop (space bar) when the take is done. Do not press Record again unless you want a second take on the same track.</li>
+              <li data-en="Press Home, then Space to listen from the beginning. Adjust the monitoring volume, not the recording level, while listening." data-zh="按 Home，再按空格从头听。听的时候调监听音量，不要改录音电平。">Press Home, then Space to listen from the beginning. Adjust the monitoring volume, not the recording level, while listening.</li>
+            </ol>
+            <figure class="shot-figure">
+              <div class="shot-frame">
+                <img src="assets/shots/aud-recording.jpg" alt="Audacity 4 project window with a recorded stereo track, transport controls and level meters" loading="lazy">
+                <span class="shot-badge"><i></i><span data-en="ACTUAL AUDACITY 4 UI" data-zh="AUDACITY 4 实际界面">ACTUAL AUDACITY 4 UI</span></span>
+              </div>
+              <figcaption class="shot-caption">
+                <div><b data-en="A recorded take in Audacity 4" data-zh="Audacity 4 里刚录下的一条">A recorded take in Audacity 4</b><span data-en="Transport at the top left, track on the right, recording meter at the top right. Your CABLE take will look the same." data-zh="左上传输控制、右侧音轨、右上录音表。你的 CABLE 录音也会长这样。">Transport at the top left, track on the right, recording meter at the top right. Your CABLE take will look the same.</span></div>
+                <div class="shot-source">Screenshot: <a href="https://www.audacityteam.org/manual/getting-started/make-your-first-recording" target="_blank" rel="noopener">official Audacity 4 manual</a></div>
+              </figcaption>
+            </figure>
+          </section>
+
+          <section class="guide-section" id="edit">
+            <p class="kicker" data-en="6 — EDIT" data-zh="6 — 剪辑与修整">6 — EDIT</p>
+            <h2 data-en="Cut, clean, normalize." data-zh="剪掉、修掉、标准化。">Cut, clean, normalize.</h2>
+            <p data-en="A raw take is allowed to be rough. Do the small set of edits below and stop; over-processing is how a guitar starts sounding like a phone recording." data-zh="原始录音粗糙是正常的。做下面这几步就停；过度处理才是吉他开始像手机录音的原因。">A raw take is allowed to be rough. Do the small set of edits below and stop; over-processing is how a guitar starts sounding like a phone recording.</p>
+            <ol>
+              <li data-en="Trim the start and end: select the silence, then Edit → Delete (or press Delete). Leave a few milliseconds of room so the first pick is not clipped." data-zh="裁掉首尾：选中空白，Edit → Delete（或按 Delete）。给第一个音留几毫秒，别切掉起音。">Trim the start and end: select the silence, then Edit → Delete (or press Delete). Leave a few milliseconds of room so the first pick is not clipped.</li>
+              <li data-en="Normalize to −1 dB: select the whole track, then Effects → Normalize (in Audacity 4, effects are under Get effects / the effects browser). This raises the peak without changing the shape." data-zh="标准化到 −1 dB：全选音轨，然后 Effects → Normalize（Audacity 4 里在 Get effects / 效果浏览器里）。它只抬高峰值，不改变波形形状。">Normalize to −1 dB: select the whole track, then Effects → Normalize (in Audacity 4, effects are under Get effects / the effects browser). This raises the peak without changing the shape.</li>
+              <li data-en="Noise Reduction only if there is audible hiss: select 0.5–1 s of noise-only audio, Effects → Noise Reduction → Get Noise Profile, then select the whole track and apply it gently. Two light passes beat one heavy pass." data-zh="只有听到明显底噪时才降噪：选 0.5–1 秒纯底噪，Effects → Noise Reduction → Get Noise Profile，再全选音轨轻微应用。两次轻的比一次狠的好。">Noise Reduction only if there is audible hiss: select 0.5–1 s of noise-only audio, Effects → Noise Reduction → Get Noise Profile, then select the whole track and apply it gently. Two light passes beat one heavy pass.</li>
+              <li data-en="Fade in and out over 10–30 ms to avoid clicks at the edges: select the edge, Effects → Fade In / Fade Out." data-zh="首尾各做 10–30 毫秒淡入淡出，避免边缘咔哒声：选中边缘，Effects → Fade In / Fade Out。">Fade in and out over 10–30 ms to avoid clicks at the edges: select the edge, Effects → Fade In / Fade Out.</li>
+              <li data-en="Listen once on headphones and once on speakers. If it only sounds good on one, split the difference instead of adding more effects." data-zh="用耳机听一遍，再用音箱听一遍。只有一边好听时，取中间值，不要继续加效果。">Listen once on headphones and once on speakers. If it only sounds good on one, split the difference instead of adding more effects.</li>
+            </ol>
+            <figure class="shot-figure">
+              <div class="shot-frame">
+                <img src="assets/shots/aud-clip.jpg" alt="Audacity 4 clip selected for editing, with clip handles and the timeline" loading="lazy">
+                <span class="shot-badge"><i></i><span data-en="ACTUAL AUDACITY 4 UI" data-zh="AUDACITY 4 实际界面">ACTUAL AUDACITY 4 UI</span></span>
+                <span class="shot-pin" style="left:50%;top:44%">1</span>
+                <span class="shot-pin is-mint" style="left:50%;top:72%">2</span>
+              </div>
+              <figcaption class="shot-caption">
+                <div><b data-en="Selecting a clip for editing" data-zh="选中一段进行剪辑">Selecting a clip for editing</b><span data-en="The selected clip gets a blue border and clip handles. Drag the edge to trim; select a range inside to delete or apply an effect." data-zh="选中的片段会出现蓝边和手柄。拖边缘裁剪；在内部选一段可以删除或应用效果。">The selected clip gets a blue border and clip handles. Drag the edge to trim; select a range inside to delete or apply an effect.</span></div>
+                <div class="shot-source">Screenshot: <a href="https://www.audacityteam.org/manual/getting-started/basic-audio-editing" target="_blank" rel="noopener">official Audacity 4 manual</a></div>
+              </figcaption>
+            </figure>
+            <div class="shot-legend">
+              <span><i>1</i><span data-en="Clip header and the … menu. Rename or manage the clip here." data-zh="片段标题和 … 菜单。在这里重命名或管理片段。">Clip header and the … menu. Rename or manage the clip here.</span></span>
+              <span><i class="is-mint">2</i><span data-en="Clip edge handles. Drag to trim; the waveform stays intact underneath." data-zh="片段边缘手柄。拖动裁剪，下面的波形不会被破坏。">Clip edge handles. Drag to trim; the waveform stays intact underneath.</span></span>
+            </div>
+          </section>
+
+          <section class="guide-section" id="export">
+            <p class="kicker" data-en="7 — EXPORT" data-zh="7 — 导出">7 — EXPORT</p>
+            <h2 data-en="WAV to keep, MP3 to share." data-zh="WAV 存档，MP3 分享。">WAV to keep, MP3 to share.</h2>
+            <p data-en="Use File → Export Audio. Choose WAV with 24-bit PCM if you may edit or master the take later; choose MP3 at 192–320 kbps if you are sending it to someone. Set the sample rate to 48000 Hz to match PedalBoard." data-zh="用 File → Export Audio。以后还要修或混就选 WAV 24-bit PCM；只是发给别人就选 MP3 192–320 kbps。采样率选 48000 Hz，与 PedalBoard 一致。">Use File → Export Audio. Choose WAV with 24-bit PCM if you may edit or master the take later; choose MP3 at 192–320 kbps if you are sending it to someone. Set the sample rate to 48000 Hz to match PedalBoard.</p>
+            <figure class="shot-figure">
+              <div class="shot-frame">
+                <img src="assets/shots/aud-export.jpg" alt="Audacity 4 Export dialog with file name, folder, format, channels, sample rate and encoding" loading="lazy">
+                <span class="shot-badge"><i></i><span data-en="ACTUAL AUDACITY 4 UI" data-zh="AUDACITY 4 实际界面">ACTUAL AUDACITY 4 UI</span></span>
+                <span class="shot-pin" style="left:44%;top:36.5%">1</span>
+                <span class="shot-pin" style="left:37%;top:52%">2</span>
+                <span class="shot-pin" style="left:44%;top:63.5%">3</span>
+                <span class="shot-pin is-mint" style="left:91%;top:95%">4</span>
+              </div>
+              <figcaption class="shot-caption">
+                <div><b data-en="The Export Audio panel in Audacity 4" data-zh="Audacity 4 的 Export Audio 面板">The Export Audio panel in Audacity 4</b><span data-en="The screenshot uses AIFF and mono settings; change them to WAV/MP3 and stereo for PedalBoard." data-zh="截图里是 AIFF 和单声道设置；录 PedalBoard 时改成 WAV/MP3 和立体声。">The screenshot uses AIFF and mono settings; change them to WAV/MP3 and stereo for PedalBoard.</span></div>
+                <div class="shot-source">Screenshot: <a href="https://www.audacityteam.org/manual/getting-started/export-your-audio" target="_blank" rel="noopener">official Audacity 4 manual</a></div>
+              </figcaption>
+            </figure>
+            <div class="shot-legend">
+              <span><i>1</i><span data-en="Format: WAV for the archive, MP3 for sharing." data-zh="格式：WAV 存档，MP3 分享。">Format: WAV for the archive, MP3 for sharing.</span></span>
+              <span><i>2</i><span data-en="Channels: Stereo, to keep PedalBoard's stereo effects." data-zh="声道：立体声，保留 PedalBoard 的立体声效果。">Channels: Stereo, to keep PedalBoard's stereo effects.</span></span>
+              <span><i>3</i><span data-en="Sample rate and encoding: 48000 Hz; 24-bit PCM for WAV, 192–320 kbps for MP3." data-zh="采样率与编码：48000 Hz；WAV 用 24-bit PCM，MP3 用 192–320 kbps。">Sample rate and encoding: 48000 Hz; 24-bit PCM for WAV, 192–320 kbps for MP3.</span></span>
+              <span><i class="is-mint">4</i><span data-en="Export writes the file. Use Edit metadata for title and artist if needed." data-zh="Export 写出文件。需要标题和作者就点 Edit metadata。">Export writes the file. Use Edit metadata for title and artist if needed.</span></span>
+            </div>
+            <p data-en="Save the project itself with File → Save Project (it becomes an .aup3 file). The project keeps the tracks and edits; the exported WAV/MP3 is the finished file. Keep both if the take matters." data-zh="项目本身用 File → Save Project 保存（会生成 .aup3 文件）。项目保留音轨和编辑；导出的 WAV/MP3 是成品。重要的录音两个都留。">Save the project itself with File → Save Project (it becomes an .aup3 file). The project keeps the tracks and edits; the exported WAV/MP3 is the finished file. Keep both if the take matters.</p>
+          </section>
+
+          <section class="guide-section" id="cheat">
+            <p class="kicker" data-en="8 — CHEAT SHEET" data-zh="8 — 速查表">8 — CHEAT SHEET</p>
+            <h2 data-en="The settings worth remembering." data-zh="值得记住的设置。">The settings worth remembering.</h2>
+            <div class="table-wrap">
+              <table class="spec-table">
+                <thead><tr><th data-en="Setting" data-zh="设置">Setting</th><th data-en="Value" data-zh="值">Value</th><th data-en="Why" data-zh="为什么">Why</th></tr></thead>
+                <tbody>
+                  <tr><td data-en="PedalBoard monitor" data-zh="PedalBoard 监听">PedalBoard monitor</td><td data-en="Headphones / interface" data-zh="耳机 / 声卡">Headphones / interface</td><td data-en="Low latency; no feedback." data-zh="低延迟，不啸叫。">Low latency; no feedback.</td></tr>
+                  <tr><td data-en="PedalBoard VIRTUAL OUT" data-zh="PedalBoard 虚拟输出">PedalBoard VIRTUAL OUT</td><td data-en="On" data-zh="开">On</td><td data-en="Feeds CABLE Input." data-zh="把信号送进 CABLE Input。">Feeds CABLE Input.</td></tr>
+                  <tr><td data-en="Audacity host" data-zh="Audacity Host">Audacity host</td><td><code>Windows WASAPI</code></td><td data-en="Sees CABLE Output; modern Windows path." data-zh="能看到 CABLE Output；较新的 Windows 路径。">Sees CABLE Output; modern Windows path.</td></tr>
+                  <tr><td data-en="Recording device" data-zh="录音设备">Recording device</td><td><code>CABLE Output</code></td><td data-en="The receiving end of the virtual cable." data-zh="虚拟声卡的接收端。">The receiving end of the virtual cable.</td></tr>
+                  <tr><td data-en="Channels" data-zh="声道">Channels</td><td data-en="2 (Stereo)" data-zh="2（立体声）">2 (Stereo)</td><td data-en="Keeps stereo modulation, delay and reverb." data-zh="保留立体声调制、延迟和混响。">Keeps stereo modulation, delay and reverb.</td></tr>
+                  <tr><td data-en="Sample rate" data-zh="采样率">Sample rate</td><td><code>48000 Hz</code></td><td data-en="Matches PedalBoard and the cable." data-zh="与 PedalBoard 和虚拟声卡一致。">Matches PedalBoard and the cable.</td></tr>
+                  <tr><td data-en="Recording peaks" data-zh="录音峰值">Recording peaks</td><td data-en="−12 to −6 dBFS" data-zh="−12 到 −6 dBFS">−12 to −6 dBFS</td><td data-en="Headroom without noise." data-zh="有动态余量，又不至于太小声。">Headroom without noise.</td></tr>
+                  <tr><td data-en="Input monitoring" data-zh="输入监听">Input monitoring</td><td data-en="Off" data-zh="关">Off</td><td data-en="You already monitor through PedalBoard." data-zh="你已经在 PedalBoard 里监听了。">You already monitor through PedalBoard.</td></tr>
+                  <tr><td data-en="Project file" data-zh="项目文件">Project file</td><td><code>.aup3</code></td><td data-en="Keeps tracks and edits for later." data-zh="保留音轨和编辑，方便以后改。">Keeps tracks and edits for later.</td></tr>
+                  <tr><td data-en="Archive export" data-zh="存档导出">Archive export</td><td><code>WAV 24-bit</code></td><td data-en="Lossless, good for further editing." data-zh="无损，适合继续编辑。">Lossless, good for further editing.</td></tr>
+                  <tr><td data-en="Sharing export" data-zh="分享导出">Sharing export</td><td><code>MP3 192–320 kbps</code></td><td data-en="Small file, good enough for listening." data-zh="文件小，试听足够。">Small file, good enough for listening.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="guide-section" id="trouble">
+            <p class="kicker" data-en="9 — TROUBLESHOOTING" data-zh="9 — 故障排查">9 — TROUBLESHOOTING</p>
+            <h2 data-en="No signal, echo, clicks." data-zh="没信号、回声、爆音。">No signal, echo, clicks.</h2>
+            <div class="faq">
+              <details>
+                <summary data-en="Audacity's meter stays at −60 and nothing records." data-zh="Audacity 电平一直在 −60，录不到东西。">Audacity's meter stays at −60 and nothing records.</summary>
+                <div class="faq-body"><p data-en="Check three things in order: PedalBoard's VIRTUAL OUT is on and its CABLE meter moves; Audacity's recording device is CABLE Output, not the microphone; Audacity's host is Windows WASAPI. If the CABLE meter in PedalBoard is also dead, the virtual cable is not running." data-zh="按顺序查三件事：PedalBoard 的虚拟输出是否打开、CABLE 表是否动；Audacity 的录音设备是不是 CABLE Output 而不是麦克风；Audacity 的 Host 是不是 Windows WASAPI。如果 PedalBoard 的 CABLE 表也不动，就是虚拟声卡没运行。">Check three things in order: PedalBoard's VIRTUAL OUT is on and its CABLE meter moves; Audacity's recording device is CABLE Output, not the microphone; Audacity's host is Windows WASAPI. If the CABLE meter in PedalBoard is also dead, the virtual cable is not running.</p></div>
+              </details>
+              <details>
+                <summary data-en="CABLE Output does not appear in Audacity." data-zh="Audacity 里找不到 CABLE Output。">CABLE Output does not appear in Audacity.</summary>
+                <div class="faq-body"><p data-en="Install VB-CABLE from vb-audio.com/Cable, reboot Windows, then press Rescan audio devices in Audacity. Also check Windows Sound settings that CABLE Input exists as a playback device. If Audacity was open during installation, restart it." data-zh="从 vb-audio.com/Cable 安装 VB-CABLE，重启 Windows，然后在 Audacity 里点 Rescan audio devices。也去 Windows 声音设置确认 CABLE Input 作为播放设备存在。安装时 Audacity 开着的话，重启 Audacity。">Install VB-CABLE from vb-audio.com/Cable, reboot Windows, then press Rescan audio devices in Audacity. Also check Windows Sound settings that CABLE Input exists as a playback device. If Audacity was open during installation, restart it.</p></div>
+              </details>
+              <details>
+                <summary data-en="I hear the guitar twice, with a short delay." data-zh="我听到两遍吉他，还有一点延迟。">I hear the guitar twice, with a short delay.</summary>
+                <div class="faq-body"><p data-en="You are monitoring through both PedalBoard and Audacity. Turn off input monitoring in Audacity, or mute the Audacity track while recording. Keep one monitoring path only." data-zh="你同时通过 PedalBoard 和 Audacity 监听。关掉 Audacity 的输入监听，或录音时把 Audacity 音轨静音。只保留一条监听路径。">You are monitoring through both PedalBoard and Audacity. Turn off input monitoring in Audacity, or mute the Audacity track while recording. Keep one monitoring path only.</p></div>
+              </details>
+              <details>
+                <summary data-en="The recording clicks or drops out." data-zh="录音有咔哒声或掉音。">The recording clicks or drops out.</summary>
+                <div class="faq-body"><p data-en="Raise PedalBoard's buffer to 256 or 512, close CPU-heavy apps, and match 48000 Hz everywhere. A USB hub or a long cable can also cause dropouts. Check PedalBoard's dropped-block counter while recording." data-zh="把 PedalBoard 缓冲区升到 256 或 512，关掉吃 CPU 的软件，所有地方统一 48000 Hz。USB 集线器和过长的线也会导致掉音。录音时注意 PedalBoard 的丢块计数。">Raise PedalBoard's buffer to 256 or 512, close CPU-heavy apps, and match 48000 Hz everywhere. A USB hub or a long cable can also cause dropouts. Check PedalBoard's dropped-block counter while recording.</p></div>
+              </details>
+              <details>
+                <summary data-en="Only one channel has audio." data-zh="只有一个声道有声音。">Only one channel has audio.</summary>
+                <div class="faq-body"><p data-en="Set Recording channels to 2 (Stereo) and confirm PedalBoard's output is stereo. If the source is mono by design, record mono on purpose; do not leave a stereo track with one dead side." data-zh="把录音声道设为 2（立体声），并确认 PedalBoard 输出是立体声。如果音源本来就是单声道，就明确录单声道；不要留一条只有一边有声的立体声轨。">Set Recording channels to 2 (Stereo) and confirm PedalBoard's output is stereo. If the source is mono by design, record mono on purpose; do not leave a stereo track with one dead side.</p></div>
+              </details>
+              <details>
+                <summary data-en="There is a loud squeal." data-zh="有很响的啸叫。">There is a loud squeal.</summary>
+                <div class="faq-body"><p data-en="That is feedback. Wear headphones, move the guitar away from speakers, and turn off input monitoring in Audacity. A pickup near a speaker will always find the loop." data-zh="这是啸叫。戴耳机，把吉他远离音箱，并关掉 Audacity 的输入监听。拾音器靠近音箱就一定会形成回路。">That is feedback. Wear headphones, move the guitar away from speakers, and turn off input monitoring in Audacity. A pickup near a speaker will always find the loop.</p></div>
+              </details>
+              <details>
+                <summary data-en="The exported file is quiet." data-zh="导出的文件声音很小。">The exported file is quiet.</summary>
+                <div class="faq-body"><p data-en="Normalize the track to −1 dB before exporting. If it is still quiet, the recording level was low; raising the export volume afterwards also raises the noise. Fix it at the input next time." data-zh="导出前把音轨标准化到 −1 dB。如果还是小，说明录音电平就低；事后拉高导出音量会把底噪一起拉高。下次从输入端解决。">Normalize the track to −1 dB before exporting. If it is still quiet, the recording level was low; raising the export volume afterwards also raises the noise. Fix it at the input next time.</p></div>
+              </details>
+              <details>
+                <summary data-en="Does Audacity come with PedalBoard?" data-zh="Audacity 是 PedalBoard 自带的吗？">Does Audacity come with PedalBoard?</summary>
+                <div class="faq-body"><p data-en="No. Audacity is a separate open-source project. PedalBoard does not bundle it, install it, or modify it. The same is true of VB-CABLE. Download each from its official site." data-zh="不是。Audacity 是独立的开源项目。PedalBoard 不分发、不安装、也不修改它。VB-CABLE 也一样。请从各自官网下载。">No. Audacity is a separate open-source project. PedalBoard does not bundle it, install it, or modify it. The same is true of VB-CABLE. Download each from its official site.</p></div>
+              </details>
+              <details>
+                <summary data-en="Can I record without VB-CABLE?" data-zh="不装 VB-CABLE 能录吗？">Can I record without VB-CABLE?</summary>
+                <div class="faq-body"><p data-en="Yes, but then Audacity records your interface input directly, so PedalBoard's effects are not included. You would need to reamp later or use your interface's own loopback if it has one. For a processed guitar take, use the CABLE route." data-zh="能，但 Audacity 会直接录声卡输入，PedalBoard 的效果就不在录音里。你之后要重新过效果，或者用声卡自带的 loopback（如果有）。要录处理后的吉他，就走 CABLE 这条路。">Yes, but then Audacity records your interface input directly, so PedalBoard's effects are not included. You would need to reamp later or use your interface's own loopback if it has one. For a processed guitar take, use the CABLE route.</p></div>
+              </details>
+              <details>
+                <summary data-en="The Audacity menus do not match the screenshots." data-zh="Audacity 菜单和截图不一样。">The Audacity menus do not match the screenshots.</summary>
+                <div class="faq-body"><p data-en="Audacity 4 moved the interface to Qt, and menu names can change between minor versions. Use the official manual linked below for your exact version. The recording route (WASAPI → CABLE Output → stereo → 48 kHz) does not change." data-zh="Audacity 4 换成了 Qt 界面，小版本之间菜单名称也可能变。请用下面链接的官方手册对应你的版本。录音路由（WASAPI → CABLE Output → 立体声 → 48 kHz）不变。">Audacity 4 moved the interface to Qt, and menu names can change between minor versions. Use the official manual linked below for your exact version. The recording route (WASAPI → CABLE Output → stereo → 48 kHz) does not change.</p></div>
+              </details>
+            </div>
+          </section>
+
+          <section class="guide-section" id="links">
+            <p class="kicker" data-en="10 — OFFICIAL LINKS" data-zh="10 — 官方链接">10 — OFFICIAL LINKS</p>
+            <h2 data-en="Only these addresses." data-zh="只认这些地址。">Only these addresses.</h2>
+            <p data-en="Audacity's official website is https://www.audacityteam.org/. The manual, download page and release notes all live under that domain. VB-CABLE is a separate site." data-zh="Audacity 的官网是 https://www.audacityteam.org/ 。手册、下载页和版本说明都在这个域名下。VB-CABLE 是另一个网站。">Audacity's official website is https://www.audacityteam.org/. The manual, download page and release notes all live under that domain. VB-CABLE is a separate site.</p>
+            <div class="official-links">
+              <a class="link-card" href="https://www.audacityteam.org/" target="_blank" rel="noopener"><span class="lk-kicker" data-en="OFFICIAL SITE" data-zh="官网">OFFICIAL SITE</span><b>Audacity</b><span class="lk-url">audacityteam.org</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="link-card" href="https://www.audacityteam.org/download/windows/" target="_blank" rel="noopener"><span class="lk-kicker" data-en="DOWNLOAD" data-zh="下载">DOWNLOAD</span><b data-en="Windows build" data-zh="Windows 版">Windows build</b><span class="lk-url">audacityteam.org/download/windows</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="link-card" href="https://www.audacityteam.org/manual/" target="_blank" rel="noopener"><span class="lk-kicker" data-en="MANUAL" data-zh="手册">MANUAL</span><b data-en="Audacity 4 manual" data-zh="Audacity 4 手册">Audacity 4 manual</b><span class="lk-url">audacityteam.org/manual</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="link-card" href="https://manual.audacityteam.org/" target="_blank" rel="noopener"><span class="lk-kicker" data-en="LEGACY MANUAL" data-zh="旧版手册">LEGACY MANUAL</span><b data-en="Older manual" data-zh="旧版手册">Older manual</b><span class="lk-url">manual.audacityteam.org</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="link-card" href="https://vb-audio.com/Cable/" target="_blank" rel="noopener"><span class="lk-kicker" data-en="VIRTUAL CABLE" data-zh="虚拟声卡">VIRTUAL CABLE</span><b>VB-CABLE</b><span class="lk-url">vb-audio.com/Cable</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="link-card" href="index.html#download" ><span class="lk-kicker">PEDALBOARD</span><b data-en="Download PedalBoard" data-zh="下载 PedalBoard">Download PedalBoard</b><span class="lk-url">GitHub Releases</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+            <div class="callout">
+              <svg aria-hidden="true"><use href="#i-check"/></svg>
+              <div>
+                <strong data-en="Screenshot credit" data-zh="截图来源">Screenshot credit</strong>
+                <p data-en="The Audacity screenshots on this page are from the official Audacity 4 manual at audacityteam.org/manual, used to document the actual interface. Audacity is a separate open-source project and is not affiliated with PedalBoard." data-zh="本页的 Audacity 截图来自 audacityteam.org/manual 的官方 Audacity 4 手册，用于说明实际界面。Audacity 是独立的开源项目，与 PedalBoard 没有隶属关系。">The Audacity screenshots on this page are from the official Audacity 4 manual at audacityteam.org/manual, used to document the actual interface. Audacity is a separate open-source project and is not affiliated with PedalBoard.</p>
+              </div>
+            </div>
+
+            <div class="pager-grid">
+              <a class="pager-card" href="guide.html"><span class="pk" data-en="BACK" data-zh="回看">BACK</span><b data-en="PedalBoard tutorial" data-zh="PedalBoard 教程">PedalBoard tutorial</b><span data-en="Devices, levels, knobs and default chain." data-zh="设备、电平、旋钮和默认链路。">Devices, levels, knobs and default chain.</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="pager-card" href="effects.html"><span class="pk" data-en="REFERENCE" data-zh="参考">REFERENCE</span><b data-en="All 24 effects" data-zh="全部 24 种效果">All 24 effects</b><span data-en="What each one does and where to start." data-zh="每个效果做什么，从哪开始调。">What each one does and where to start.</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="pager-card" href="advanced.html"><span class="pk" data-en="DEEPER" data-zh="进阶">DEEPER</span><b data-en="Custom Chain and VST3" data-zh="自定义链路与 VST3">Custom Chain and VST3</b><span data-en="Multi-stage sounds and third-party plugins." data-zh="多级音色与第三方插件。">Multi-stage sounds and third-party plugins.</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="PedalBoard home" data-i18n-aria="nav.homeAria"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 34 34"><rect x="2.5" y="11" width="8" height="12" rx="2.4"/><rect x="13" y="11" width="8" height="12" rx="2.4"/><rect x="23.5" y="11" width="8" height="12" rx="2.4"/><path d="M10.5 17h2.5M21 17h2.5"/><circle cx="8" cy="14.5" r="1.1" class="brand-led"/></svg></span><span class="brand-word">PedalBoard</span></a>
+        <p data-i18n="footer.tag">A Windows guitar pedalboard that opens ready to play. Free and open source.</p>
+        <p class="footer-built" data-i18n="footer.built">Built with C++ and JUCE 8.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h3 data-i18n="footer.site">Site</h3>
+          <a href="guide.html" data-i18n="nav.guide">Getting started</a>
+          <a href="effects.html" data-i18n="nav.effects">Effects</a>
+          <a href="audacity.html" data-i18n="nav.recording">Recording</a>
+          <a href="advanced.html" data-i18n="nav.advanced">Advanced</a>
+          <a href="index.html#download" data-i18n="nav.download">Download</a>
+        </div>
+        <div class="footer-col">
+          <h3 data-i18n="footer.project">Project</h3>
+          <a href="https://github.com/DengXiaoping8964/PedalBoard" target="_blank" rel="noopener" data-i18n="footer.source">Source code</a>
+          <a href="https://github.com/DengXiaoping8964/PedalBoard/releases" target="_blank" rel="noopener" data-i18n="footer.releases">Releases</a>
+          <a href="https://github.com/DengXiaoping8964/PedalBoard#readme" target="_blank" rel="noopener" data-i18n="footer.readme">Documentation</a>
+          <a href="https://github.com/DengXiaoping8964/PedalBoard/blob/main/LICENSE" target="_blank" rel="noopener" data-i18n="footer.license">AGPLv3 License</a>
+        </div>
+        <div class="footer-col">
+          <h3 data-i18n="footer.third">Third-party</h3>
+          <a href="https://www.audacityteam.org/" target="_blank" rel="noopener">Audacity</a>
+          <a href="https://manual.audacityteam.org/" target="_blank" rel="noopener">Audacity Manual</a>
+          <a href="https://vb-audio.com/Cable/" target="_blank" rel="noopener">VB-CABLE</a>
+          <a href="index.html#top" data-i18n="footer.top">Back to top</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-wordmark" aria-hidden="true">PEDALBOARD</div>
+    <div class="footer-bottom">
+      <span data-i18n="footer.rights">© 2026 PedalBoard.</span>
+      <span data-i18n="footer.note">Audacity and VB-CABLE are independent third-party software, not bundled with PedalBoard.</span>
+    </div>
+    <div class="footer-contact" id="contact">
+      <p class="footer-contact-kicker" data-i18n="footer.contactKicker">CONTACT</p>
+      <p class="footer-contact-title" data-i18n="footer.contactTitle">Questions, bugs, or a song you made?</p>
+      <p class="footer-contact-lead" data-i18n="footer.contactLead">Email me directly. I read every message.</p>
+      <a class="footer-email" href="mailto:a0966681154@gmail.com">a0966681154@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
