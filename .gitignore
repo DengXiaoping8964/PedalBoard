@@ -1,0 +1,40 @@
+# Build trees (Visual Studio / CMake generated)
+/build/
+/_tests/build/
+/_toolchain_test/build/
+/out/
+/.vs/
+CMakeUserPresets.json
+
+# Local JUCE checkout: the app fetches JUCE 8.0.15 with FetchContent unless
+# PEDALBOARD_JUCE_LOCAL is passed. It is 111 MB and is not part of this repo.
+/vendor/JUCE/
+
+# Audio SDK that users must obtain themselves (non-redistributable)
+/ThirdParty/asio/
+
+# Machine-local app data: device names, settings, hosted-plugin state
+**/PedalBoardData/
+*.settings
+*.state
+
+# Test logs and captures (reproducible; not source)
+/_toolchain_test/app_run.log
+/_tests/probe_out.txt
+*.log
+*.png
+
+# Build/IDE artefacts
+*.exe
+*.pdb
+*.ilk
+*.map
+*.obj
+*.lib
+*.exp
+*.idb
+*.suo
+*.user
+
+# Nested VCS metadata inside vendored third-party sources
+**/.git/

@@ -1,0 +1,9 @@
+* text=auto
+
+# Shell and Node tooling must keep LF even on a Windows checkout.
+*.sh   text eol=lf
+*.mjs  text eol=lf
+
+# Audio assets are binary; Git must never touch their line endings.
+*.wav  binary
+*.mp3  binary
