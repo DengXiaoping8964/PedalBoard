@@ -451,7 +451,7 @@ body.gate-open{overflow:hidden}
   .guide-step{grid-template-columns:34px minmax(0,1fr);gap:12px}
   .guide-step-num{width:32px;height:32px;font-size:10px}
   .recipe-grid{grid-template-columns:1fr}
-  .feature-grid{grid-template-columns:1fr}
+  .feature-grid{grid-template-columns:minmax(0,1fr)}
   .feature-card.is-wide{grid-column:auto}
   .official-links{grid-template-columns:1fr}
   .pager-grid{grid-template-columns:1fr}
