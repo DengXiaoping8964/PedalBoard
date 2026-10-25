@@ -268,6 +268,12 @@ cannot invalidate one that is in use.
 
 ## Build
 
+```bat
+git clone https://github.com/DengXiaoping8964/PedalBoard.git D:\PedalBoard
+```
+
+The commands below assume that checkout at `D:\PedalBoard`.
+
 Everything lands on `D:` - source, build output, settings, IRs, and the hosted
 plugin's state. Nothing is written to `C:` by this project. A VST3 the user loads is
 read from wherever it is installed; the app never copies or installs it.
