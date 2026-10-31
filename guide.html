@@ -150,7 +150,7 @@
             <span class="guide-step-num">01</span>
             <div class="guide-step-body">
               <h3 data-en="Get the zip from GitHub Releases" data-zh="从 GitHub Releases 下载压缩包">Get the zip from GitHub Releases</h3>
-              <p data-en="Open the Releases page and download PedalBoard-v1.0.0-windows-x64.zip. Avoid third-party download mirrors." data-zh="打开 Releases 页面，下载 PedalBoard-v1.0.0-windows-x64.zip。不要用第三方下载站。">Open the Releases page and download PedalBoard-v1.0.0-windows-x64.zip. Avoid third-party download mirrors.</p>
+              <p data-en="Open the Releases page and download PedalBoard-v1.1.0-windows-x64.zip. Avoid third-party download mirrors." data-zh="打开 Releases 页面，下载 PedalBoard-v1.1.0-windows-x64.zip。不要用第三方下载站。">Open the Releases page and download PedalBoard-v1.1.0-windows-x64.zip. Avoid third-party download mirrors.</p>
               <a class="text-link" href="https://github.com/DengXiaoping8964/PedalBoard/releases/latest" target="_blank" rel="noopener"><span data-en="Open Releases" data-zh="打开 Releases">Open Releases</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </div>
           </div>
@@ -198,7 +198,7 @@
                 </div>
                 <figcaption class="shot-caption">
                   <div><b data-en="The actual first-launch prompt" data-zh="真实的首次启动提示">The actual first-launch prompt</b><span data-en="Both languages are offered before the main window is built, so nothing is shown in the wrong language first." data-zh="主界面构建前就先问语言，所以不会先用错语言显示一遍。">Both languages are offered before the main window is built, so nothing is shown in the wrong language first.</span></div>
-                  <div class="shot-source" data-en="PedalBoard v1.0.0 · Windows 10" data-zh="PedalBoard v1.0.0 · Windows 10">PedalBoard v1.0.0 · Windows 10</div>
+                  <div class="shot-source" data-en="PedalBoard · Windows 10" data-zh="PedalBoard · Windows 10">PedalBoard · Windows 10</div>
                 </figcaption>
               </figure>
 
@@ -230,8 +230,8 @@
               <span class="shot-pin is-mint" style="left:67%;top:92.1%">4</span>
             </div>
             <figcaption class="shot-caption">
-              <div><b data-en="The Audio devices panel, captured from PedalBoard 1.0.0" data-zh="PedalBoard 1.0.0 的「音频设备」面板实拍">The Audio devices panel, captured from PedalBoard 1.0.0</b><span data-en="The panel opens with the last devices and the system defaults. Replace the input with your guitar interface before playing." data-zh="面板会带出上次的设备和系统默认值。开弹前，把输入换成你的吉他声卡。">The panel opens with the last devices and the system defaults. Replace the input with your guitar interface before playing.</span></div>
-              <div class="shot-source" data-en="PedalBoard v1.0.0 · Windows 10 · UI language can be switched inside this panel" data-zh="PedalBoard v1.0.0 · Windows 10 · 界面语言可在这个面板里切换">PedalBoard v1.0.0 · Windows 10 · UI language can be switched inside this panel</div>
+              <div><b data-en="The Audio devices panel, captured from the app" data-zh="软件里的「音频设备」面板实拍">The Audio devices panel, captured from the app</b><span data-en="The panel opens with the last devices and the system defaults. Replace the input with your guitar interface before playing." data-zh="面板会带出上次的设备和系统默认值。开弹前，把输入换成你的吉他声卡。">The panel opens with the last devices and the system defaults. Replace the input with your guitar interface before playing.</span></div>
+              <div class="shot-source" data-en="PedalBoard · Windows 10 · UI language can be switched inside this panel" data-zh="PedalBoard · Windows 10 · 界面语言可在这个面板里切换">PedalBoard · Windows 10 · UI language can be switched inside this panel</div>
             </figcaption>
           </figure>
           <div class="shot-legend">
@@ -246,10 +246,20 @@
             <li data-en="Driver type: Windows WASAPI for both input and monitor. MME and DirectSound are fallbacks; ASIO is only available if the app was built with the ASIO SDK." data-zh="驱动类型：输入和监听都先选 Windows WASAPI。MME 和 DirectSound 是备选；ASIO 只有在自行用 ASIO SDK 构建的版本里才有。">Driver type: Windows WASAPI for both input and monitor. MME and DirectSound are fallbacks; ASIO is only available if the app was built with the ASIO SDK.</li>
             <li data-en="Input: your interface, not “Stereo Mix” and not the laptop microphone." data-zh="输入：选你的声卡，不要选「立体声混音」，也不要选笔记本麦克风。">Input: your interface, not “Stereo Mix” and not the laptop microphone.</li>
             <li data-en="Monitor: your headphones or interface output. Do not choose CABLE here; CABLE is the recording path." data-zh="监听：耳机或声卡输出。这里不要选 CABLE；CABLE 是录音路径。">Monitor: your headphones or interface output. Do not choose CABLE here; CABLE is the recording path.</li>
-            <li data-en="Buffer: 256 samples to start. Lower to 128 or 64 if your CPU keeps up; raise to 512 if you hear crackles." data-zh="缓冲区：先用 256。电脑跟得上就降到 128 或 64；有爆音就升到 512。">Buffer: 256 samples to start. Lower to 128 or 64 if your CPU keeps up; raise to 512 if you hear crackles.</li>
+            <li data-en="Buffer: 256 samples to start. Lower to 128 or 64 if your CPU keeps up; raise to 512 if you hear crackles. In DIRECT the same box is labelled LATENCY." data-zh="缓冲区：先用 256。电脑跟得上就降到 128 或 64；有爆音就升到 512。直通模式下这个框叫「延迟 / LATENCY」。">Buffer: 256 samples to start. Lower to 128 or 64 if your CPU keeps up; raise to 512 if you hear crackles. In DIRECT the same box is labelled LATENCY.</li>
             <li data-en="Sample rate: 48000 Hz. Recording software should use the same rate." data-zh="采样率：48000 Hz。录音软件也要用同一个采样率。">Sample rate: 48000 Hz. Recording software should use the same rate.</li>
           </ul>
           <p data-en="Press Apply. If a device is missing, plug it in and press Rescan. Close other apps that may be holding the interface in exclusive mode." data-zh="点「应用 / Apply」。设备没出现，就插好线后点「重新扫描 / Rescan」。也关掉可能独占声卡的其他软件。">Press Apply. If a device is missing, plug it in and press Rescan. Close other apps that may be holding the interface in exclusive mode.</p>
+
+          <h3 data-en="Lowest latency: turn on DIRECT" data-zh="最低延迟：打开「直通」">Lowest latency: turn on DIRECT</h3>
+          <p data-en="The DIRECT switch in the main window changes the audio topology. Input and monitor output open as one duplex stream on the same interface, the input ring is skipped, and the box beside the switch becomes LATENCY. PedalBoard pairs the interface's own output automatically and prefers WASAPI Exclusive, then Low Latency, then shared mode. Apply the devices first, then switch DIRECT on; LATENCY can be changed while playing." data-zh="主界面的「直通 / DIRECT」开关会改变音频拓扑：输入和监听输出在同一块声卡上合成一条双向流，跳过输入环形缓冲，开关旁原来的「缓冲」框变成「延迟 / LATENCY」。PedalBoard 会自动配对该声卡自己的输出，优先 WASAPI 独占，其次低延迟，再次共享模式。先应用设备，再打开 DIRECT；播放时也能改 LATENCY。">The DIRECT switch in the main window changes the audio topology. Input and monitor output open as one duplex stream on the same interface, the input ring is skipped, and the box beside the switch becomes LATENCY. PedalBoard pairs the interface's own output automatically and prefers WASAPI Exclusive, then Low Latency, then shared mode. Apply the devices first, then switch DIRECT on; LATENCY can be changed while playing.</p>
+          <div class="callout">
+            <svg aria-hidden="true"><use href="#i-check"/></svg>
+            <div>
+              <strong data-en="Measured on one interface: 50 ms → 12 ms." data-zh="同一块声卡上的实测：50 ms → 12 ms。">Measured on one interface: 50 ms → 12 ms.</strong>
+              <p data-en="On a JOYO Momix-Cab at 48 kHz, the normal two-device path at 480 samples measured 20.0 ms input + 30.0 ms monitor = 50.0 ms. DIRECT at 144 samples measured 6.0 + 6.0 = 12.0 ms; watch the xrun counter in the status line, which read 0 over a 10 s verification run. 256 samples gives 21.3 ms. Effect latency still applies, and true zero latency is only the interface's own hardware direct-monitor switch." data-zh="在 JOYO Momix-Cab、48 kHz 下，普通双设备路径 480 样本实测输入 20.0 ms + 监听 30.0 ms = 50.0 ms。直通在 144 样本下实测 6.0 + 6.0 = 12.0 ms；注意状态栏的断音计数，10 秒验证运行中为 0。256 样本为 21.3 ms。效果器自身延迟仍然存在，真正的 0 延迟只有声卡自带的硬件直通开关。">On a JOYO Momix-Cab at 48 kHz, the normal two-device path at 480 samples measured 20.0 ms input + 30.0 ms monitor = 50.0 ms. DIRECT at 144 samples measured 6.0 + 6.0 = 12.0 ms; watch the xrun counter in the status line, which read 0 over a 10 s verification run. 256 samples gives 21.3 ms. Effect latency still applies, and true zero latency is only the interface's own hardware direct-monitor switch.</p>
+            </div>
+          </div>
 
           <div class="callout is-warn">
             <svg aria-hidden="true"><use href="#i-alert"/></svg>
@@ -323,7 +333,7 @@
             </div>
             <figcaption class="shot-caption">
               <div><b data-en="The main window with the default chain on first launch" data-zh="首次打开时的主界面与默认链路">The main window with the default chain on first launch</b><span data-en="Chinese UI shown. Press EN/中文 in the site header to see the English capture." data-zh="当前显示中文界面；点网站右上角的 EN/中文 可看英文实拍。">Chinese UI shown. Press EN/中文 in the site header to see the English capture.</span></div>
-              <div class="shot-source" data-en="PedalBoard v1.0.0 · Windows 10 · 1256 × 751" data-zh="PedalBoard v1.0.0 · Windows 10 · 1256 × 751">PedalBoard v1.0.0 · Windows 10 · 1256 × 751</div>
+              <div class="shot-source" data-en="PedalBoard v1.1.0 · Windows 10 · 1256 × 751" data-zh="PedalBoard v1.1.0 · Windows 10 · 1256 × 751">PedalBoard v1.1.0 · Windows 10 · 1256 × 751</div>
             </figcaption>
           </figure>
           <div class="shot-legend">
@@ -358,7 +368,7 @@
             </div>
             <figcaption class="shot-caption">
               <div><b data-en="One card, three areas" data-zh="一张卡，三个区域">One card, three areas</b><span data-en="The Noise Gate card at 1256 px wide, cropped from the actual window." data-zh="1256 像素宽窗口里的噪声门卡片，从实际界面裁切。">The Noise Gate card at 1256 px wide, cropped from the actual window.</span></div>
-              <div class="shot-source" data-en="PedalBoard v1.0.0 · actual app capture" data-zh="PedalBoard v1.0.0 · 实际界面截图">PedalBoard v1.0.0 · actual app capture</div>
+              <div class="shot-source" data-en="PedalBoard · actual app capture" data-zh="PedalBoard · 实际界面截图">PedalBoard · actual app capture</div>
             </figcaption>
           </figure>
           <div class="shot-legend">
@@ -529,7 +539,11 @@
             </details>
             <details>
               <summary data-en="Octave or pitch effects sound unstable." data-zh="八度或移调听起来不稳。">Octave or pitch effects sound unstable.</summary>
-              <div class="faq-body"><p data-en="Octave is monophonic by design; chords and double stops will confuse it. Play single notes. Pitch Shifter is the better choice for shifting a whole performance, and its Formant control keeps the tone natural." data-zh="Octave 按设计就是单音的，和弦和双音会让它判断混乱。弹单音。整段移调请用 Pitch Shifter，它的共振峰控制能让音色更自然。">Octave is monophonic by design; chords and double stops will confuse it. Play single notes. Pitch Shifter is the better choice for shifting a whole performance, and its Formant control keeps the tone natural.</p></div>
+              <div class="faq-body"><p data-en="Octave has been polyphonic since 1.1.0: an 80-band phase-scaling filterbank generates both octaves without note tracking, so chords and double stops keep their notes. If a very low note sounds rough, lower Octave Down and use the 3-Band EQ before it to remove the lowest frequencies. Pitch Shifter remains the tool for shifting a whole performance, and its Formant control keeps the tone natural." data-zh="1.1.0 起 Octave 是多音的：80 段相位缩放滤波器组不用单音跟踪就能生成上下八度，和弦和双音都能保持各自的音。极低的音听起来粗糙时，降低「低八度 / Octave Down」，并在它前面用三段均衡削掉最低频。整段移调仍然用 Pitch Shifter，它的共振峰控制能让音色更自然。">Octave has been polyphonic since 1.1.0: an 80-band phase-scaling filterbank generates both octaves without note tracking, so chords and double stops keep their notes. If a very low note sounds rough, lower Octave Down and use the 3-Band EQ before it to remove the lowest frequencies. Pitch Shifter remains the tool for shifting a whole performance, and its Formant control keeps the tone natural.</p></div>
+            </details>
+            <details>
+              <summary data-en="How do I get the lowest latency?" data-zh="怎么把延迟降到最低？">How do I get the lowest latency?</summary>
+              <div class="faq-body"><p data-en="Turn on DIRECT in the main window after applying your devices. PedalBoard then opens the input and monitor output as one duplex stream on the same interface, skips the input ring, and lets you pick the size with the LATENCY box. On the measured Momix-Cab at 48 kHz this cut the round trip from 50 ms to 12 ms at 144 samples; 256 samples gives 21.3 ms. If your monitoring device is on another interface, DIRECT first tries to pair the input interface's own output; if that fails, the normal path is restored." data-zh="应用设备后，打开主界面的「直通 / DIRECT」。PedalBoard 会把输入和监听输出合成同一块声卡上的一条双向流，跳过输入环形缓冲，并用「延迟 / LATENCY」框选缓冲大小。在实测的 Momix-Cab、48 kHz 下，往返从 50 ms 降到 144 样本的 12 ms；256 样本为 21.3 ms。如果监听设备在另一块声卡上，DIRECT 会先尝试配对输入声卡自己的输出；失败就恢复普通路径。">Turn on DIRECT in the main window after applying your devices. PedalBoard then opens the input and monitor output as one duplex stream on the same interface, skips the input ring, and lets you pick the size with the LATENCY box. On the measured Momix-Cab at 48 kHz this cut the round trip from 50 ms to 12 ms at 144 samples; 256 samples gives 21.3 ms. If your monitoring device is on another interface, DIRECT first tries to pair the input interface's own output; if that fails, the normal path is restored.</p></div>
             </details>
             <details>
               <summary data-en="I cannot add another effect." data-zh="我加不了新效果。">I cannot add another effect.</summary>

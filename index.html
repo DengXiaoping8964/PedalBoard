@@ -25,7 +25,7 @@
   "name": "PedalBoard",
   "applicationCategory": "MultimediaApplication",
   "operatingSystem": "Windows 10, Windows 11",
-  "softwareVersion": "1.0.0",
+  "softwareVersion": "1.1.0",
   "license": "https://www.gnu.org/licenses/agpl-3.0.html",
   "downloadUrl": "https://github.com/DengXiaoping8964/PedalBoard/releases/latest",
   "codeRepository": "https://github.com/DengXiaoping8964/PedalBoard",
@@ -135,14 +135,14 @@
         <div class="hero-actions">
           <a class="btn btn-primary" href="https://github.com/DengXiaoping8964/PedalBoard/releases/latest" target="_blank" rel="noopener">
             <svg aria-hidden="true"><use href="#i-download"/></svg>
-            <span data-en="Download v1.0.0" data-zh="下载 v1.0.0">Download v1.0.0</span>
+            <span data-en="Download v1.1.0" data-zh="下载 v1.1.0">Download v1.1.0</span>
           </a>
           <a class="btn btn-ghost" href="guide.html">
             <span data-en="3-minute setup" data-zh="3 分钟上手">3-minute setup</span>
             <svg aria-hidden="true"><use href="#i-arrow"/></svg>
           </a>
         </div>
-        <p class="hero-micro" data-en="3.4 MB · no installer · Windows 10/11 x64" data-zh="3.4 MB · 免安装 · Windows 10/11 x64">3.4 MB · no installer · Windows 10/11 x64</p>
+        <p class="hero-micro" data-en="3.6 MB · no installer · Windows 10/11 x64 · NEW: polyphonic Octave + 12 ms DIRECT mode" data-zh="3.6 MB · 免安装 · Windows 10/11 x64 · 新增：复音八度 + 12 ms 直通模式">3.6 MB · no installer · Windows 10/11 x64 · NEW: polyphonic Octave + 12 ms DIRECT mode</p>
         <dl class="hero-stats">
           <div><dt>3</dt><dd data-en="steps to sound" data-zh="步出声">steps to sound</dd></div>
           <div><dt>8</dt><dd data-en="effects ready" data-zh="个效果已接好">effects ready</dd></div>
@@ -246,7 +246,7 @@
       <header class="section-head reveal">
         <p class="kicker" data-en="02 — THE ACTUAL WINDOW" data-zh="02 — 实际界面">02 — THE ACTUAL WINDOW</p>
         <h2 class="display" id="lookTitle"><span class="line" data-en="This is the window." data-zh="这就是打开后的样子。">This is the window.</span><span class="line" data-en="Not a render." data-zh="不是渲染图。">Not a render.</span></h2>
-        <p class="section-lead" data-en="Captured from PedalBoard 1.0.0 on Windows 10. The default chain, the device status, the meters and every knob are exactly what you get after the first launch." data-zh="截自 Windows 10 上的 PedalBoard 1.0.0。默认链路、设备状态、电平表和每个旋钮，都是你首次打开后看到的东西。">Captured from PedalBoard 1.0.0 on Windows 10. The default chain, the device status, the meters and every knob are exactly what you get after the first launch.</p>
+        <p class="section-lead" data-en="Captured from PedalBoard 1.1.0 on Windows 10. The default chain, the device status, the meters and every knob are exactly what you get after the first launch; the new DIRECT switch sits in the second row." data-zh="截自 Windows 10 上的 PedalBoard 1.1.0。默认链路、设备状态、电平表和每个旋钮，都是你首次打开后看到的东西；新增的「直通」开关就在第二行。">Captured from PedalBoard 1.1.0 on Windows 10. The default chain, the device status, the meters and every knob are exactly what you get after the first launch; the new DIRECT switch sits in the second row.</p>
       </header>
       <figure class="shot-figure reveal">
         <div class="shot-frame">
@@ -259,7 +259,7 @@
           <span class="shot-pin is-mint" style="left:5.4%;top:95.6%">4</span>
         </div>
         <figcaption class="shot-caption">
-          <div><b data-en="PedalBoard 1.0.0, default chain, first launch" data-zh="PedalBoard 1.0.0，默认链路，首次打开">PedalBoard 1.0.0, default chain, first launch</b><span data-en="Switch the site language to EN/中文 and the screenshot switches with it." data-zh="切换网站右上角的 EN/中文，截图也会跟着换。">Switch the site language to EN/中文 and the screenshot switches with it.</span></div>
+          <div><b data-en="PedalBoard 1.1.0, default chain, first launch" data-zh="PedalBoard 1.1.0，默认链路，首次打开">PedalBoard 1.1.0, default chain, first launch</b><span data-en="Switch the site language to EN/中文 and the screenshot switches with it." data-zh="切换网站右上角的 EN/中文，截图也会跟着换。">Switch the site language to EN/中文 and the screenshot switches with it.</span></div>
           <div class="shot-source" data-en="Actual app screenshot · Windows 10 · 1256 × 751" data-zh="实际软件截图 · Windows 10 · 1256 × 751">Actual app screenshot · Windows 10 · 1256 × 751</div>
         </figcaption>
       </figure>
@@ -268,6 +268,43 @@
         <span><i>2</i><span data-en="ON: bypass one card without losing its settings." data-zh="ON：旁通一张卡，不丢参数。">ON: bypass one card without losing its settings.</span></span>
         <span><i>3</i><span data-en="The default chain starts here; drag a header to reorder." data-zh="默认链路从这里开始；拖卡片头部排序。">The default chain starts here; drag a header to reorder.</span></span>
         <span><i class="is-mint">4</i><span data-en="Status bar: input peak, latency, CPU and dropped blocks." data-zh="状态栏：输入峰值、延迟、CPU 和丢块。">Status bar: input peak, latency, CPU and dropped blocks.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="direct" aria-labelledby="directTitle">
+    <div class="wrap chain-panel">
+      <div class="chain-copy reveal">
+        <p class="kicker" data-en="NEW IN 1.1.0 — DIRECT MODE" data-zh="1.1.0 新增 — 直通模式">NEW IN 1.1.0 — DIRECT MODE</p>
+        <h2 class="display" id="directTitle"><span class="line" data-en="One device." data-zh="一块声卡。">One device.</span><span class="line" data-en="12 ms. Play." data-zh="12 ms。开弹。">12 ms. Play.</span></h2>
+        <p class="section-lead" data-en="DIRECT closes the normal two-device path and runs the whole chain inside one duplex callback on the guitar interface. Plug speakers into the interface, press DIRECT, and the buffer box becomes the LATENCY control: 144 samples is a 12 ms round trip at 48 kHz, measured, not estimated." data-zh="「直通」会关掉原来的双设备路径，把整条效果链放进吉他声卡的一个双工回调里。把音箱插到声卡上，按下「直通」，缓冲区框就变成「延迟」控制：48 kHz 下 144 样本实测往返 12 ms，不是估算。">DIRECT closes the normal two-device path and runs the whole chain inside one duplex callback on the guitar interface. Plug speakers into the interface, press DIRECT, and the buffer box becomes the LATENCY control: 144 samples is a 12 ms round trip at 48 kHz, measured, not estimated.</p>
+        <div class="dsp-number">12<span>ms</span></div>
+        <p class="dsp-label" data-en="ROUND TRIP · WINDOWS AUDIO EXCLUSIVE · 144 SAMPLES" data-zh="实测往返 · WINDOWS AUDIO 独占模式 · 144 样本">ROUND TRIP · WINDOWS AUDIO EXCLUSIVE · 144 SAMPLES</p>
+        <ul class="chain-points">
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="50 ms normal path → 12 ms direct at 144 samples, driver-reported. The status line shows the xrun counter, so stability is visible on your own interface." data-zh="普通路径 50 ms → 直通 144 样本 12 ms，均为驱动上报。状态栏显示断音计数，在你自己声卡上是否稳定一眼可见。">50 ms normal path → 12 ms direct at 144 samples, driver-reported. The status line shows the xrun counter, so stability is visible on your own interface.</span></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="Auto-pairs with the interface's own speaker output and switches to the lowest-latency driver mode it can open." data-zh="自动配对该声卡自己的扬声器输出，并优先打开能用的最低延迟驱动模式。">Auto-pairs with the interface's own speaker output and switches to the lowest-latency driver mode it can open.</span></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><span data-en="NEW: Octave is polyphonic now — both octaves follow chords, no monophonic note tracking. Pitch Shifter was already clean and is unchanged." data-zh="新增：八度已经是复音 — 上下八度都能跟随和弦，不再单音跟踪。移调本来就干净，这次没有改。">NEW: Octave is polyphonic now — both octaves follow chords, no monophonic note tracking. Pitch Shifter was already clean and is unchanged.</span></li>
+        </ul>
+        <div class="hero-actions">
+          <a class="btn btn-ghost" href="advanced.html#latency"><span data-en="Measured latency and limits" data-zh="实测延迟与限制">Measured latency and limits</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+      <div class="chain-demo reveal">
+        <div class="card-top">
+          <span class="card-label" data-en="MEASURED · JOYO MOMIX-CAB" data-zh="实测 · JOYO MOMIX-CAB">MEASURED · JOYO MOMIX-CAB</span>
+          <span class="chip" data-en="48 kHz" data-zh="48 kHz">48 kHz</span>
+        </div>
+        <div class="table-wrap">
+          <table class="spec-table">
+            <thead><tr><th data-en="Path" data-zh="路径">Path</th><th data-en="Buffer" data-zh="缓冲">Buffer</th><th data-en="Round trip" data-zh="往返">Round trip</th></tr></thead>
+            <tbody>
+              <tr><td data-en="Normal, two devices" data-zh="普通，双设备">Normal, two devices</td><td>480</td><td>50.0 ms</td></tr>
+              <tr><td data-en="DIRECT, Exclusive" data-zh="直通，独占">DIRECT, Exclusive</td><td>144</td><td><b>12.0 ms</b></td></tr>
+              <tr><td data-en="DIRECT, Exclusive" data-zh="直通，独占">DIRECT, Exclusive</td><td>256</td><td>21.3 ms</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="measure-note" data-en="Driver-reported. Effect latency is extra: Cabinet 512 samples, Pitch Shifter 80 ms. The status line shows xruns; true zero is the interface's hardware direct-monitor switch." data-zh="驱动上报。效果器自身延迟另计：箱体 512 样本、移调 80 ms。状态栏显示断音计数；真正的 0 延迟是声卡自带的硬件直通开关。">Driver-reported. Effect latency is extra: Cabinet 512 samples, Pitch Shifter 80 ms. The status line shows xruns; true zero is the interface's hardware direct-monitor switch.</p>
       </div>
     </div>
   </section>
@@ -444,29 +481,29 @@
           <p style="margin-top:18px"><a class="text-link" href="guide.html"><span data-i18n="dl.guideLink">Read the full setup guide</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
         </div>
 
-        <aside class="release-card" aria-label="Release 1.0.0">
+        <aside class="release-card" aria-label="Release 1.1.0">
           <div class="release-head">
             <div>
               <span class="release-eyebrow">PEDALBOARD</span>
-              <strong>v1.0.0</strong>
+              <strong>v1.1.0</strong>
             </div>
             <span class="release-badge" data-i18n="dl.badge">LATEST</span>
           </div>
           <dl class="release-rows">
             <div><dt data-i18n="dl.platformLabel">Platform</dt><dd data-i18n="dl.platformValue">Windows 10/11 x64</dd></div>
-            <div><dt data-i18n="dl.sizeLabel">Download</dt><dd data-i18n="dl.sizeValue">3.4 MB zip</dd></div>
+            <div><dt data-i18n="dl.sizeLabel">Download</dt><dd data-i18n="dl.sizeValue">3.6 MB zip</dd></div>
             <div><dt data-i18n="dl.licenseLabel">License</dt><dd>AGPLv3</dd></div>
             <div><dt data-i18n="dl.buildLabel">Build</dt><dd data-i18n="dl.buildValue">Release · static CRT</dd></div>
           </dl>
           <div class="sha-block">
             <span class="sha-label" data-i18n="dl.shaLabel">SHA-256</span>
-            <code id="shaText">31b66d88af4a92cf1708695a0715920<br>d8e55519b6b2c8fce55887ccf6593021b</code>
-            <button class="copy-btn" type="button" id="copySha" data-hash="31b66d88af4a92cf1708695a0715920d8e55519b6b2c8fce55887ccf6593021b" aria-label="Copy SHA-256 checksum" data-i18n-aria="dl.copyAria">
+            <code id="shaText">91971ee813d10f65a1b6c76e67dcead6<br>d1255c7f3fac6d30d5ad907046ba8089</code>
+            <button class="copy-btn" type="button" id="copySha" data-hash="91971ee813d10f65a1b6c76e67dcead6d1255c7f3fac6d30d5ad907046ba8089" aria-label="Copy SHA-256 checksum" data-i18n-aria="dl.copyAria">
               <svg aria-hidden="true"><use href="#i-copy"/></svg>
               <span id="copyLabel" data-i18n="dl.copy">Copy</span>
             </button>
           </div>
-          <a class="release-checksum" href="https://github.com/DengXiaoping8964/PedalBoard/releases/download/v1.0.0/SHA256SUMS.txt" target="_blank" rel="noopener">SHA256SUMS.txt</a>
+          <a class="release-checksum" href="https://github.com/DengXiaoping8964/PedalBoard/releases/download/v1.1.0/SHA256SUMS.txt" target="_blank" rel="noopener">SHA256SUMS.txt</a>
         </aside>
       </div>
 

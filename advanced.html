@@ -160,12 +160,12 @@
     </div>
   </section>
 
-  <section class="section" aria-labelledby="flowTitle">
+  <section class="section" id="latency" aria-labelledby="flowTitle">
     <div class="wrap">
       <header class="section-head reveal">
         <p class="kicker" data-en="02 — ROUTING" data-zh="02 — 路由">02 — ROUTING</p>
         <h2 class="display" id="flowTitle"><span class="line" data-en="One chain, two paths." data-zh="一条链路，两路输出。">One chain, two paths.</span></h2>
-        <p class="section-lead" data-en="The monitor path is kept fast. The virtual path adds CABLE's own buffer on top. The status bar shows the latencies separately instead of hiding them in one number." data-zh="监听路径保持快。虚拟路径会在上面再加 CABLE 自己的缓冲。状态栏把几段延迟分开显示，而不是塞进一个数字。">The monitor path is kept fast. The virtual path adds CABLE's own buffer on top. The status bar shows the latencies separately instead of hiding them in one number.</p>
+        <p class="section-lead" data-en="The monitor path is kept fast, and DIRECT mode makes it faster: one duplex device on the interface, measured at 12 ms round trip instead of 50 ms on the normal two-device path. The virtual path still adds CABLE's own buffer on top. The status bar shows every segment separately instead of hiding them in one number." data-zh="监听路径本来就快，直通模式让它更快：声卡上一个双工设备，实测往返 12 ms，而普通双设备路径是 50 ms。虚拟路径仍会在上面再加 CABLE 自己的缓冲。状态栏把每一段延迟分开显示，而不是塞进一个数字。">The monitor path is kept fast, and DIRECT mode makes it faster: one duplex device on the interface, measured at 12 ms round trip instead of 50 ms on the normal two-device path. The virtual path still adds CABLE's own buffer on top. The status bar shows every segment separately instead of hiding them in one number.</p>
       </header>
       <div class="flow reveal" aria-hidden="true">
         <div class="flow-node">
@@ -185,7 +185,7 @@
           <div class="flow-node is-out">
             <span class="flow-icon"><svg><use href="#i-jack"/></svg></span>
             <span class="flow-kicker" data-en="MONITOR" data-zh="监听">MONITOR</span>
-            <strong data-en="Interface or headphones. Low latency." data-zh="声卡或耳机，低延迟。">Interface or headphones. Low latency.</strong>
+            <strong data-en="Interface or headphones. DIRECT: 12 ms round trip." data-zh="声卡或耳机。直通：实测往返 12 ms。">Interface or headphones. DIRECT: 12 ms round trip.</strong>
           </div>
           <div class="flow-node is-out is-virtual">
             <span class="flow-icon"><svg><use href="#i-split"/></svg></span>
@@ -199,6 +199,13 @@
         <div>
           <strong data-en="The virtual path is not free." data-zh="虚拟路径不是零成本。">The virtual path is not free.</strong>
           <p data-en="CABLE adds its own buffer. Recording through CABLE Output adds that buffer on top of the monitor path. For playing, monitor through the interface; for recording, accept the extra latency or use the interface's direct monitoring." data-zh="CABLE 有自己的缓冲。通过 CABLE Output 录音，会在这个基础上再加一段。演奏时用声卡监听；录音时接受这段额外延迟，或用声卡的直接监听。">CABLE adds its own buffer. Recording through CABLE Output adds that buffer on top of the monitor path. For playing, monitor through the interface; for recording, accept the extra latency or use the interface's direct monitoring.</p>
+        </div>
+      </div>
+      <div class="callout reveal">
+        <svg aria-hidden="true"><use href="#i-check"/></svg>
+        <div>
+          <strong data-en="DIRECT mode: 12.0 ms measured at 48 kHz." data-zh="直通模式：48 kHz 下实测 12.0 ms。">DIRECT mode: 12.0 ms measured at 48 kHz.</strong>
+          <p data-en="Normal two-device path at 480 samples: 20.0 ms input + 30.0 ms monitor = 50.0 ms. DIRECT opens one duplex Windows Audio (Exclusive Mode) stream at 144 samples: 6.0 + 6.0 = 12.0 ms; 256 samples gives 21.3 ms. The status line shows the xrun counter, which read 0 over a 10 s verification run and is the number to watch after changing buffer or driver mode. The LATENCY box adjusts it live. Effect latency still applies (Pitch Shifter 80 ms, Cabinet 512 samples); true zero is only the interface's hardware direct-monitor switch." data-zh="普通双设备路径 480 样本：输入 20.0 ms + 监听 30.0 ms = 50.0 ms。直通在 144 样本下打开一个 Windows Audio 独占双工流：6.0 + 6.0 = 12.0 ms；256 样本为 21.3 ms。状态栏显示断音计数，在 10 秒验证运行中为 0；改缓冲或驱动模式后要盯着这个数。「延迟」框可实时调整。效果器自身延迟仍然存在（移调 80 ms、箱体 512 样本）；真正的 0 延迟只有声卡自带的硬件直通开关。">Normal two-device path at 480 samples: 20.0 ms input + 30.0 ms monitor = 50.0 ms. DIRECT opens one duplex Windows Audio (Exclusive Mode) stream at 144 samples: 6.0 + 6.0 = 12.0 ms; 256 samples gives 21.3 ms. The status line shows the xrun counter, which read 0 over a 10 s verification run and is the number to watch after changing buffer or driver mode. The LATENCY box adjusts it live. Effect latency still applies (Pitch Shifter 80 ms, Cabinet 512 samples); true zero is only the interface's hardware direct-monitor switch.</p>
         </div>
       </div>
     </div>

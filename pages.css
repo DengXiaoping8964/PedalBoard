@@ -130,13 +130,14 @@ body.gate-open{overflow:hidden}
 .chain-points li{display:flex;gap:9px;align-items:flex-start;font-size:11.5px;line-height:1.55;color:var(--muted)}
 .chain-points svg{width:14px;height:14px;flex:none;margin-top:2px;color:var(--mint)}
 .chain-demo{
-  position:relative;padding:24px;border:1px solid var(--line-strong);border-radius:24px;
+  position:relative;min-width:0;padding:24px;border:1px solid var(--line-strong);border-radius:24px;
   background:
     radial-gradient(90% 100% at 100% 0%,rgba(255,122,26,.08),transparent 60%),
     linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.012));
   box-shadow:0 30px 80px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.08);
 }
 .chain-demo .card-top{margin-bottom:16px}
+.measure-note{margin:14px 2px 0;font-size:9px;line-height:1.65;color:var(--faint);letter-spacing:.02em}
 .chain-demo .mini-chain{margin:0 0 14px}
 
 /* ---------- home: starter six ---------- */
