@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(PedalBoard
-        VERSION 1.0.0
+        VERSION 1.1.0
         DESCRIPTION "Guitar pedalboard with physical monitoring and VB-CABLE virtual routing"
         LANGUAGES C CXX)
 

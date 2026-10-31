@@ -33,6 +33,13 @@ class VBCableRouter;
   atomics. No thread ever waits for another: producers drop the oldest samples when
   a queue is full and consumers emit silence when it is empty, both of which are
   counted and shown in the status bar instead of being hidden behind a lock.
+
+  Low-latency direct mode is the exception, and deliberately a different topology:
+  inputManager and outputManager are closed, and one directManager opens the same
+  interface's input and monitor output as a single duplex device. Its callback is
+  the whole physical path - hardware input, chain, hardware output - so the input
+  ring and the second device thread do not exist while it runs. The cable manager
+  and virtualRing are untouched; the direct callback feeds the same ring.
 ==============================================================================*/
 
 /** Input side callback: copies the incoming device channels into the ring and does
@@ -152,6 +159,24 @@ public:
     void shutdown();
 
     bool isRunning() const noexcept { return running.load (std::memory_order_relaxed); }
+
+    /** Switches between the normal two-device path and one duplex device whose
+        callback carries the guitar through the chain to the speakers directly.
+        Direct mode removes the input ring and the second device thread, which is
+        the only way software can cut the round trip; it still cannot beat the
+        driver's buffer, so the buffer box remains the latency control.
+
+        Both the input and the monitor output have to belong to the same interface
+        (the parenthesised name in both device names must match), otherwise the two
+        endpoints have no common clock and the attempt is refused with a reason. */
+    juce::String setDirectMode (bool shouldEnable);
+    bool isDirectMode() const noexcept { return directActive.load (std::memory_order_relaxed); }
+
+    /** The device type the direct path actually opened, e.g. "Windows Audio
+        (Exclusive Mode)". Empty while direct mode is off. */
+    juce::String getDirectTypeName() const { return directTypeName; }
+    double getDirectRoundTripMs() const noexcept;
+    int    getDirectXruns() const noexcept;
 
     //==============================================================================
     //  Device enumeration - message thread only
@@ -304,6 +329,11 @@ public:
         int version = 0;
         double sampleRate = 0.0;
         int bufferSize = 0;
+        /** Direct mode has its own buffer because it deliberately opens a
+            different driver mode and usually a far smaller block than the
+            two-device recording path. 0 means "pick the smallest safe size". */
+        int directBufferSize = 0;
+        bool direct = false;
         bool monitor = true, virtualEnabled = true;
         int language = noLanguage;
         bool devicesChosen = false;
@@ -326,7 +356,9 @@ public:
         the device chooser has to appear. */
     static bool loadFromFile (Settings& result);
     void saveSettings();
-    void applySettings (const Settings& settings);
+    /** Returns anything that failed while restoring the chain or the direct path,
+        so applyAndStart() can put it on screen instead of swallowing it. */
+    juce::String applySettings (const Settings& settings);
 
     /** The two settings the engine carries only because it owns the file: which
         interface language is showing, and whether the user has ever been through
@@ -365,6 +397,8 @@ private:
     void audioDeviceStopped() override;
 
     void fillChainBuffer (juce::AudioBuffer<float>& destination, int numSamples) noexcept;
+    void fillDirectBuffer (const float* const* inputChannelData, int numInputChannels,
+                           juce::AudioBuffer<float>& destination, int numSamples) noexcept;
     void runChain (juce::AudioBuffer<float>& audio, const ChainSnapshot& snapshot) noexcept;
     void pushToVirtualRing (const juce::AudioBuffer<float>& out) noexcept;
     void updateDryCompensation (const juce::AudioBuffer<float>& input,
@@ -376,7 +410,18 @@ private:
 
     EffectContext makeContext();
 
+    /** Opens the duplex device for direct mode. Tries the driver modes from the
+        lowest latency down, picks a small block, and returns a reason when no
+        type can open both endpoints together. Message thread only. */
+    juce::String openDirectDevice();
+    /** Reopens the normal input and monitor managers with the remembered names
+        after direct mode closes them. Message thread only. */
+    juce::String restoreNormalDevices();
+
     juce::AudioDeviceManager inputManager, outputManager;
+    /** The fourth manager, used only while direct mode is on. Separate so the
+        normal pair can be restored without re-enumerating anything. */
+    juce::AudioDeviceManager directManager;
 
     AudioRingBuffer inputRing, virtualRing;
     InputRingWriter inputCallback { inputRing, inputSampleRate, &running };
@@ -407,6 +452,14 @@ private:
 
     std::atomic<double> inputSampleRate { 0.0 }, outputSampleRate { 44100.0 };
     std::atomic<int>    outputBlockSize { 512 };
+    std::atomic<bool>   directActive { false };
+
+    /** Message-thread state behind the direct toggle: the type that really
+        opened and its output endpoint, both for the status line. */
+    bool directManagerInitialised = false;
+    bool directCallbackRegistered = false;
+    juce::String directTypeName, directOutputName;
+    int requestedDirectBufferSize = 0;
 
     /** The file's clock choice. When no output device opens, the live values are
         the manager defaults; saving those would silently rewrite a 441-sample

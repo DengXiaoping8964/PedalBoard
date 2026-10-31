@@ -272,6 +272,13 @@ void MainComponent::buildGlobalControls()
         persistSettings();
     };
 
+    /*  Direct mode is a device topology, not a mute: it closes the two normal
+        paths and runs the chain inside one duplex callback. The click handler
+        reports the driver's refusal in the problem line instead of leaving the
+        lamp on over a stopped device. */
+    directFlag = std::make_unique<FlagButton> (tr ("DIRECT"), false);
+    directFlag->onClicked = [this] (bool on) { directFlagClicked (on); };
+
     physicalMeter = std::make_unique<LevelMeter> (LevelMeter::Orientation::horizontal);
     physicalMeter->setLabel (tr ("MONITOR"));
     virtualMeter  = std::make_unique<LevelMeter> (LevelMeter::Orientation::horizontal);
@@ -285,6 +292,7 @@ void MainComponent::buildGlobalControls()
     addAndMakeVisible (*expressionKnob);
     addAndMakeVisible (*monitorFlag);
     addAndMakeVisible (*virtualFlag);
+    addAndMakeVisible (*directFlag);
     addAndMakeVisible (*physicalMeter);
     addAndMakeVisible (*virtualMeter);
     addAndMakeVisible (*devicesButton);
@@ -307,6 +315,17 @@ void MainComponent::buildGlobalControls()
         // panel, which is the fact the next launch looks for.
         engine.setDevicesChosen();
 
+        /*  Direct mode was turned off so the panel could work on the normal pair.
+            Put it back on the new pair if that is where it came from, and let a
+            refusal explain itself instead of silently changing the mode. */
+        if (directWasOnBeforeChooser)
+        {
+            if (auto error = engine.setDirectMode (true); error.isNotEmpty())
+                problemText = problemText.isNotEmpty() ? problemText + "\n" + error : error;
+
+            directWasOnBeforeChooser = false;
+        }
+
         // Everything the panel may have moved: devices, clock, and therefore the
         // latency figures and the add-effect availability.
         populateDeviceBoxes();
@@ -323,6 +342,14 @@ void MainComponent::buildGlobalControls()
         hideDeviceChooser();
 
         engine.setDevicesChosen();
+
+        if (directWasOnBeforeChooser)
+        {
+            if (auto error = engine.setDirectMode (true); error.isNotEmpty())
+                problemText = error;
+
+            directWasOnBeforeChooser = false;
+        }
 
         if (! engine.isRunning())
             problemText = tr ("No audio device is running. Open Devices to pick an input and an output.");
@@ -504,6 +531,8 @@ void MainComponent::inputDeviceChanged()
     if (suppressBoxCallbacks)
         return;
 
+    leaveDirectForDeviceChange();
+
     problemText = engine.setInputDevice (inputTypeBox->getText(), inputDeviceBox->getText());
 
     // A new input can bring a different set of clocks with it.
@@ -529,6 +558,8 @@ void MainComponent::outputDeviceChanged()
 {
     if (suppressBoxCallbacks)
         return;
+
+    leaveDirectForDeviceChange();
 
     problemText = engine.setOutputDevice (outputTypeBox->getText(), outputDeviceBox->getText());
 
@@ -570,6 +601,31 @@ void MainComponent::sampleRateChanged()
     persistSettings();
 }
 
+void MainComponent::leaveDirectForDeviceChange()
+{
+    if (! engine.isDirectMode())
+        return;
+
+    if (auto error = engine.setDirectMode (false); error.isNotEmpty())
+        problemText = error;
+}
+
+void MainComponent::directFlagClicked (bool on)
+{
+    problemText = engine.setDirectMode (on);
+
+    // A refused switch leaves the engine on the normal path; the lamp has to say
+    // what is running, not what was clicked.
+    directFlag->setOn (engine.isDirectMode());
+
+    populateDeviceBoxes();
+    populateRateBox();
+    populateBufferBox();
+    refreshGlobalControls();
+    updateStatusText();
+    persistSettings();
+}
+
 void MainComponent::addEffectChanged()
 {
     if (suppressBoxCallbacks)
@@ -603,10 +659,15 @@ void MainComponent::refreshGlobalControls()
 {
     monitorFlag->setOn (engine.isMonitorEnabled());
     virtualFlag->setOn (engine.getVirtualRouter().isEnabled());
+    directFlag->setOn (engine.isDirectMode());
 
     dryWetKnob->setValue (engine.getGlobalWet());
     trimKnob->setValue (engine.getInputTrimDb());
     expressionKnob->setValue (engine.getExpressionPosition());
+
+    // The BUFFER caption becomes LATENCY in direct mode, and that caption is
+    // painted by this component rather than owned by the combo.
+    repaint (getLocalBounds().removeFromTop (topBarHeight));
 }
 
 //==============================================================================
@@ -840,20 +901,44 @@ void MainComponent::updateStatusText()
         labels in a status line are not the same words in the same order in every
         language, so "Latency" + value + "monitor" + value cannot be translated by
         translating the pieces. */
-    auto latency = trf ("Latency  input %1   monitor %2   chain %3",
-                        ms (engine.getInputLatencyMs()),
-                        ms (engine.getOutputLatencyMs()),
-                        ms (engine.getChainLatencyMs()));
+    if (engine.isDirectMode())
+    {
+        /*  One device, one callback: the two halves below are the driver's own
+            input and output figures, and their sum is what the player hears.
+            The buffer box is the LATENCY control in this mode. */
+        auto direct = trf ("Direct  round-trip %1 (in %2 + out %3)  chain %4  buffer %5  xruns %6  [%7]",
+                           ms (engine.getDirectRoundTripMs()),
+                           ms (engine.getInputLatencyMs()),
+                           ms (engine.getOutputLatencyMs()),
+                           ms (engine.getChainLatencyMs()),
+                           engine.getBufferSizeSamples(),
+                           engine.getDirectXruns(),
+                           engine.getDirectTypeName());
 
-    if (engine.getLatencyCompensationSaturated())
-        latency += tr (" (dry compensation at its limit)");
+        if (engine.getLatencyCompensationSaturated())
+            direct += tr (" (dry compensation at its limit)");
 
-    latency += trf ("   virtual +%1", ms (engine.getVirtualLatencyMs()));
+        direct += trf ("   virtual +%1", ms (engine.getVirtualLatencyMs()));
 
-    if (cableStatus.deviceType.isNotEmpty())
-        latency += "   [" + cableStatus.deviceType + "]";
+        statusLines.add (direct);
+    }
+    else
+    {
+        auto latency = trf ("Latency  input %1   monitor %2   chain %3",
+                            ms (engine.getInputLatencyMs()),
+                            ms (engine.getOutputLatencyMs()),
+                            ms (engine.getChainLatencyMs()));
 
-    statusLines.add (latency);
+        if (engine.getLatencyCompensationSaturated())
+            latency += tr (" (dry compensation at its limit)");
+
+        latency += trf ("   virtual +%1", ms (engine.getVirtualLatencyMs()));
+
+        if (cableStatus.deviceType.isNotEmpty())
+            latency += "   [" + cableStatus.deviceType + "]";
+
+        statusLines.add (latency);
+    }
 
     const auto load = trf ("CPU %1%   sample rate %2 Hz   block %3   slots %4/%5   dropped blocks  input %6 (over %7 / under %8)  virtual %9 (over %10 / under %11)",
                            juce::String (static_cast<double> (engine.getCpuUsage()), 1),
@@ -893,6 +978,22 @@ void MainComponent::updateStatusText()
 //==============================================================================
 void MainComponent::showDeviceChooser()
 {
+    /*  The panel edits the normal input/monitor pair, so direct mode has to be off
+        while it is open. onAccepted/onCancelled put it back on if it was on. */
+    directWasOnBeforeChooser = engine.isDirectMode();
+
+    if (directWasOnBeforeChooser)
+    {
+        if (auto error = engine.setDirectMode (false); error.isNotEmpty())
+            problemText = error;
+
+        populateDeviceBoxes();
+        populateRateBox();
+        populateBufferBox();
+        refreshGlobalControls();
+        updateStatusText();
+    }
+
     chooser->populate();
     chooser->refreshCableStatus();
 
@@ -942,6 +1043,7 @@ void MainComponent::refreshAllText()
 
     monitorFlag->setLabelText (tr ("MONITOR"));
     virtualFlag->setLabelText (tr ("TO CABLE"));
+    directFlag->setLabelText (tr ("DIRECT"));
 
     physicalMeter->setLabel (tr ("MONITOR"));
     virtualMeter->setLabel (tr ("CABLE"));
@@ -1043,9 +1145,11 @@ void MainComponent::resized()
     auto x = edgeMargin;
 
     monitorFlag->setBounds (x, row2Y, flagWidth, flagHeight);
-    x += flagWidth + boxGap;
+    x += flagWidth + 8;
     virtualFlag->setBounds (x, row2Y, flagWidth, flagHeight);
-    x += flagWidth + 14;
+    x += flagWidth + 8;
+    directFlag->setBounds (x, row2Y, flagWidth, flagHeight);
+    x += flagWidth + 12;
 
     dryWetKnob->setBounds     (x, row2Y - 5, knobWidth, rowTwoHeight + 10);
     x += knobWidth + 4;
@@ -1107,7 +1211,11 @@ void MainComponent::paint (juce::Graphics& g)
     caption (tr ("INPUT DEVICE"),   row1.inputDevice,  deviceNameWidth);
     caption (tr ("OUT TYPE"),       row1.outputType,   inputTypeWidth);
     caption (tr ("MONITOR DEVICE"), row1.outputDevice, deviceNameWidth);
-    caption (tr ("BUFFER"),         row1.buffer,       bufferBoxWidth);
+
+    // In direct mode the buffer *is* the latency control; naming it what it does
+    // is the difference between a mysterious block size and an adjustable delay.
+    caption (engine.isDirectMode() ? tr ("LATENCY") : tr ("BUFFER"),
+             row1.buffer, bufferBoxWidth);
     caption (tr ("SAMPLE RATE"),    row1.rate,         rateBoxWidth);
 
     // The chain's own label, so an empty board is not mistaken for a crash.

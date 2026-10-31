@@ -43,6 +43,321 @@ AudioEngine::~AudioEngine()
     shutdown();
 }
 
+namespace
+{
+    /** "Microphone (Momix-Cab)" and "Speakers (Momix-Cab)" are two endpoints of the
+        same interface; the name in parentheses is what tells JUCE (and us) that
+        they share a clock. A device without parentheses is its own family, which
+        is the ASIO case. */
+    juce::String interfaceFamilyName (const juce::String& deviceName)
+    {
+        const auto open = deviceName.lastIndexOfChar ('(');
+
+        if (open >= 0 && deviceName.endsWith (")"))
+            return deviceName.substring (open + 1, deviceName.length() - 1).trim();
+
+        return deviceName.trim();
+    }
+
+    /** Lower is better. Direct mode is the low-latency path, so the exclusive
+        WASAPI mode is tried before the shared one even when the user's normal
+        path is shared. */
+    int directTypeRank (const juce::String& typeName)
+    {
+        if (typeName.containsIgnoreCase ("ASIO"))         return 0;
+        if (typeName.containsIgnoreCase ("Exclusive"))    return 1;
+        if (typeName.containsIgnoreCase ("Low Latency"))  return 2;
+        if (typeName == "Windows Audio")                  return 3;
+        if (typeName.containsIgnoreCase ("DirectSound"))  return 4;
+        if (typeName.containsIgnoreCase ("MME"))          return 5;
+
+        return 6;
+    }
+}
+
+//==============================================================================
+juce::String AudioEngine::setDirectMode (bool shouldEnable)
+{
+    if (shouldEnable == isDirectMode())
+        return {};
+
+    if (! shouldEnable)
+    {
+        /*  Stop the callback while the flag still says direct, so the last block
+            reads the hardware inputs rather than switching to an empty ring for
+            the one block the removal takes. */
+        if (directCallbackRegistered)
+        {
+            directManager.removeAudioCallback (this);
+            directCallbackRegistered = false;
+        }
+
+        directActive.store (false, std::memory_order_release);
+        directManager.closeAudioDevice();
+        directTypeName.clear();
+        directOutputName.clear();
+
+        inputRing.flushAsConsumer();
+        inputRing.resetCounters();
+
+        return restoreNormalDevices();
+    }
+
+    if (inputDeviceName.isEmpty() || outputDeviceName.isEmpty())
+        return tr ("Direct mode needs a selected input and monitor output.");
+
+    /*  The common case is a monitor selector still pointing at a streaming or
+        CABLE endpoint while the player has plugged speakers into the interface.
+        Adopt the interface's own matching output automatically; the top bar shows
+        the new name. If no such endpoint exists, refuse with the fix. */
+    auto inputFamily = interfaceFamilyName (inputDeviceName);
+    const auto previousOutputName = outputDeviceName;
+    const auto previousOutputType = outputTypeName;
+    bool adoptedOutput = false;
+
+    if (! inputFamily.equalsIgnoreCase (interfaceFamilyName (outputDeviceName)))
+    {
+        for (auto* type : inputManager.getAvailableDeviceTypes())
+        {
+            if (type == nullptr)
+                continue;
+
+            type->scanForDevices();
+
+            // A type can only carry the pair if it also lists the chosen input.
+            if (! type->getDeviceNames (true).contains (inputDeviceName))
+                continue;
+
+            for (auto& candidate : type->getDeviceNames (false))
+            {
+                if (! inputFamily.equalsIgnoreCase (interfaceFamilyName (candidate)))
+                    continue;
+
+                outputDeviceName = candidate;
+                outputTypeName   = type->getTypeName();
+                adoptedOutput    = true;
+                break;
+            }
+
+            if (adoptedOutput)
+                break;
+        }
+    }
+
+    if (! inputFamily.equalsIgnoreCase (interfaceFamilyName (outputDeviceName)))
+        return tr ("Direct mode needs the input and the monitor output from the same interface. "
+                   "Set MONITOR DEVICE to the interface's own speaker or headphone output.");
+
+    /*  Preserve the normal pair's real clock before it stops: a file that never
+        asked for a buffer must not later be rewritten with the direct block as
+        the shared-mode request. */
+    if (requestedBufferSize <= 0)
+        requestedBufferSize = getBufferSizeSamples();
+    if (requestedSampleRate <= 0.0)
+        requestedSampleRate = getSampleRate();
+
+    // Free the normal devices first: the same endpoints cannot be opened twice.
+    inputManager.closeAudioDevice();
+    outputManager.closeAudioDevice();
+
+    inputRing.flushAsConsumer();
+    inputRing.resetCounters();
+
+    if (auto error = openDirectDevice(); error.isNotEmpty())
+    {
+        directManager.closeAudioDevice();
+
+        // A refused direct attempt must not leave the user's monitor selector
+        // pointing somewhere they did not choose.
+        if (adoptedOutput)
+        {
+            outputDeviceName = previousOutputName;
+            outputTypeName   = previousOutputType;
+        }
+
+        if (auto restoreError = restoreNormalDevices(); restoreError.isNotEmpty())
+            return error + "\n" + trf ("The normal path could not be restored: %1", restoreError);
+
+        return error;
+    }
+
+    directActive.store (true, std::memory_order_release);
+    directManager.addAudioCallback (this);
+    directCallbackRegistered = true;
+
+    return {};
+}
+
+juce::String AudioEngine::openDirectDevice()
+{
+    if (! directManagerInitialised)
+    {
+        /*  initialise() builds the device-type list; it also opens the system
+            default for a moment, which is closed and replaced below. Without this
+            call setCurrentAudioDeviceType() and setAudioDeviceSetup() do nothing
+            and return an empty error string - the trap the cable router
+            documented as well. */
+        const auto error = directManager.initialise (chainChannels, chainChannels, nullptr, false);
+        directManagerInitialised = true;
+
+        if (error.isNotEmpty() && directManager.getAvailableDeviceTypes().isEmpty())
+            return trf ("Direct audio system: %1", error);
+    }
+
+    std::vector<juce::String> candidates;
+
+    for (auto* type : directManager.getAvailableDeviceTypes())
+    {
+        if (type == nullptr)
+            continue;
+
+        type->scanForDevices();
+
+        if (type->getDeviceNames (true).contains (inputDeviceName)
+            && type->getDeviceNames (false).contains (outputDeviceName))
+            candidates.push_back (type->getTypeName());
+    }
+
+    if (candidates.empty())
+        return tr ("No driver exposes the selected input and monitor output together.");
+
+    std::sort (candidates.begin(), candidates.end(),
+               [] (const juce::String& a, const juce::String& b)
+               {
+                   return directTypeRank (a) < directTypeRank (b);
+               });
+
+    for (auto& typeName : candidates)
+    {
+        directManager.closeAudioDevice();
+        directManager.setCurrentAudioDeviceType (typeName, true);
+
+        auto setup = directManager.getAudioDeviceSetup();
+        setup.inputDeviceName  = inputDeviceName;
+        setup.outputDeviceName = outputDeviceName;
+        setup.useDefaultInputChannels = true;
+        setup.useDefaultOutputChannels = true;
+        setup.sampleRate = requestedSampleRate > 0.0 ? requestedSampleRate : 0.0;
+        setup.bufferSize = 0;
+
+        if (directManager.setAudioDeviceSetup (setup, true).isNotEmpty())
+            continue;
+
+        auto* device = directManager.getCurrentAudioDevice();
+
+        if (device == nullptr)
+            continue;
+
+        /*  A small block is the whole point, but the smallest one is not always
+            safe. 128 samples (2.7 ms at 48 kHz) is the floor this app will choose
+            by itself; the user can go lower or higher from the LATENCY box. */
+        const auto sizes = device->getAvailableBufferSizes();
+        int chosen = 0;
+
+        if (requestedDirectBufferSize > 0 && sizes.contains (requestedDirectBufferSize))
+            chosen = requestedDirectBufferSize;
+        else
+        {
+            for (auto size : sizes)
+                if (size >= 128) { chosen = size; break; }
+
+            if (chosen == 0)
+                for (auto size : sizes)
+                    if (size > 0) { chosen = size; break; }
+        }
+
+        if (chosen > 0)
+        {
+            auto bufferSetup = directManager.getAudioDeviceSetup();
+            bufferSetup.bufferSize = chosen;
+
+            // A refused buffer is not a refused mode: keep the driver's default.
+            directManager.setAudioDeviceSetup (bufferSetup, true);
+        }
+
+        device = directManager.getCurrentAudioDevice();
+
+        if (device == nullptr)
+            continue;
+
+        directTypeName  = device->getTypeName();
+        directOutputName = device->getName();
+        requestedDirectBufferSize = device->getCurrentBufferSizeSamples();
+
+        return {};
+    }
+
+    return tr ("No driver would open the selected input and monitor output as one duplex stream.");
+}
+
+juce::String AudioEngine::restoreNormalDevices()
+{
+    juce::String problems;
+
+    if (inputDeviceName.isNotEmpty())
+    {
+        if (inputTypeName.isNotEmpty())
+            inputManager.setCurrentAudioDeviceType (inputTypeName, true);
+
+        auto setup = inputManager.getAudioDeviceSetup();
+        setup.inputDeviceName = inputDeviceName;
+
+        if (auto* type = inputManager.getCurrentDeviceTypeObject();
+            type == nullptr || ! type->hasSeparateInputsAndOutputs())
+            setup.outputDeviceName = inputDeviceName;
+        else
+            setup.outputDeviceName = {};
+
+        setup.useDefaultInputChannels = true;
+        setup.useDefaultOutputChannels = true;
+
+        if (requestedSampleRate > 0.0)
+            setup.sampleRate = requestedSampleRate;
+        if (requestedBufferSize > 0)
+            setup.bufferSize = requestedBufferSize;
+
+        if (auto error = inputManager.setAudioDeviceSetup (setup, true); error.isNotEmpty())
+            problems << trf ("Input: %1", error) << "\n";
+    }
+
+    if (outputDeviceName.isNotEmpty())
+    {
+        if (outputTypeName.isNotEmpty())
+            outputManager.setCurrentAudioDeviceType (outputTypeName, true);
+
+        auto setup = outputManager.getAudioDeviceSetup();
+        setup.outputDeviceName = outputDeviceName;
+        setup.inputDeviceName  = {};
+        setup.useDefaultOutputChannels = true;
+
+        if (requestedSampleRate > 0.0)
+            setup.sampleRate = requestedSampleRate;
+        if (requestedBufferSize > 0)
+            setup.bufferSize = requestedBufferSize;
+
+        if (auto error = outputManager.setAudioDeviceSetup (setup, true); error.isNotEmpty())
+            problems << trf ("Output: %1", error) << "\n";
+    }
+
+    return problems.trim();
+}
+
+double AudioEngine::getDirectRoundTripMs() const noexcept
+{
+    return (isDirectMode() ? getInputLatencyMs() + getOutputLatencyMs() : 0.0);
+}
+
+int AudioEngine::getDirectXruns() const noexcept
+{
+    if (! isDirectMode())
+        return -1;
+
+    if (auto* device = directManager.getCurrentAudioDevice())
+        return device->getXRunCount();
+
+    return -1;
+}
+
 EffectContext AudioEngine::makeContext()
 {
     return { &expressionPosition, &expressionMidiActive, &convolutionQueue };
@@ -72,14 +387,23 @@ juce::String AudioEngine::initialise (const juce::String& preferredInputType,
     // Two managers, two threads, deliberately separate failures: a broken
     // microphone device must not stop the monitoring path and vice versa.
     //
+    // These errors are collected, not returned. initialise() tries the system
+    // default device first, and if that default is unavailable (an unplugged
+    // interface, an endpoint left stuck by a killed exclusive stream) it reports
+    // failure while still having built the device-type lists. Returning here
+    // would abandon the device the file actually asked for, which can open fine;
+    // the chosen pair is opened below and its own errors are reported instead.
+    //
     // The explicit isNotEmpty() is required, not stylistic: juce::String declares
     // operator bool() as a private member precisely so that `if (someString)` will
     // not compile, so an error string has to be tested by name.
+    juce::String problems;
+
     if (auto error = inputManager.initialise (chainChannels, 0, nullptr, false); error.isNotEmpty())
-        return trf ("Input audio system: %1", error);
+        problems << trf ("Input audio system: %1", error) << "\n";
 
     if (auto error = outputManager.initialise (0, chainChannels, nullptr, false); error.isNotEmpty())
-        return trf ("Output audio system: %1", error);
+        problems << trf ("Output audio system: %1", error) << "\n";
 
     /*  Both calls above have already opened the system default device. When the
         file asked for nothing, that device is what is really running, so its type
@@ -110,8 +434,6 @@ juce::String AudioEngine::initialise (const juce::String& preferredInputType,
     // are open; otherwise the manager would start and stop a default device first and
     // the chosen one second, which is audible as a dropout on the way in.
     router->scanForCable();
-
-    juce::String problems;
 
     if (preferredInputDevice.isNotEmpty())
     {
@@ -159,6 +481,15 @@ juce::String AudioEngine::initialise (const juce::String& preferredInputType,
 
 void AudioEngine::shutdown()
 {
+    if (directCallbackRegistered)
+    {
+        directManager.removeAudioCallback (this);
+        directCallbackRegistered = false;
+    }
+
+    directActive.store (false, std::memory_order_release);
+    directManager.closeAudioDevice();
+
     if (callbacksRegistered)
     {
         // Removing a callback that was never added is an assertion in JUCE, and
@@ -227,6 +558,13 @@ juce::String AudioEngine::setInputDevice (const juce::String& typeName, const ju
 {
     if (deviceName.isEmpty())
         return tr ("No input device selected.");
+
+    /*  Direct mode owns the open devices and is built around the pair that was
+        selected when it started. A device change is a normal-path operation; leave
+        direct mode first so the same code that always configured the pair runs. */
+    if (isDirectMode())
+        if (auto error = setDirectMode (false); error.isNotEmpty())
+            return error;
 
     if (typeName.isNotEmpty() && typeName != inputManager.getCurrentAudioDeviceType())
         inputManager.setCurrentAudioDeviceType (typeName, true);
@@ -300,6 +638,10 @@ juce::String AudioEngine::setOutputDevice (const juce::String& typeName, const j
     if (deviceName.isEmpty())
         return tr ("No output device selected.");
 
+    if (isDirectMode())
+        if (auto error = setDirectMode (false); error.isNotEmpty())
+            return error;
+
     if (typeName.isNotEmpty() && typeName != outputManager.getCurrentAudioDeviceType())
         outputManager.setCurrentAudioDeviceType (typeName, true);
 
@@ -340,7 +682,9 @@ juce::String AudioEngine::setOutputDevice (const juce::String& typeName, const j
 
 juce::Array<double> AudioEngine::getAvailableSampleRates() const
 {
-    if (auto* device = outputManager.getCurrentAudioDevice())
+    auto& manager = isDirectMode() ? directManager : outputManager;
+
+    if (auto* device = manager.getCurrentAudioDevice())
     {
         auto rates = device->getAvailableSampleRates();
         if (rates.size() > 0)
@@ -352,7 +696,9 @@ juce::Array<double> AudioEngine::getAvailableSampleRates() const
 
 juce::Array<int> AudioEngine::getAvailableBufferSizes() const
 {
-    if (auto* device = outputManager.getCurrentAudioDevice())
+    auto& manager = isDirectMode() ? directManager : outputManager;
+
+    if (auto* device = manager.getCurrentAudioDevice())
     {
         auto sizes = device->getAvailableBufferSizes();
         if (sizes.size() > 0)
@@ -364,6 +710,33 @@ juce::Array<int> AudioEngine::getAvailableBufferSizes() const
 
 juce::String AudioEngine::setSampleRate (double newRate)
 {
+    requestedSampleRate = newRate;
+
+    if (isDirectMode())
+    {
+        const auto previousRate = getSampleRate();
+        auto setup = directManager.getAudioDeviceSetup();
+        setup.sampleRate = newRate;
+
+        if (auto error = directManager.setAudioDeviceSetup (setup, true); error.isNotEmpty())
+        {
+            /*  A refused rate leaves the device closed, not on the old clock.
+                Put the old clock back so a failed selection does not mute the
+                direct path. */
+            if (previousRate > 0.0)
+            {
+                auto rollback = directManager.getAudioDeviceSetup();
+                rollback.sampleRate = previousRate;
+                directManager.setAudioDeviceSetup (rollback, true);
+                requestedSampleRate = previousRate;
+            }
+
+            return trf ("Direct: %1", error);
+        }
+
+        return {};
+    }
+
     juce::String problems;
 
     // Both managers have to agree. If the input device ran at a different rate the
@@ -386,6 +759,33 @@ juce::String AudioEngine::setSampleRate (double newRate)
 
 juce::String AudioEngine::setBufferSize (int newSizeInSamples)
 {
+    if (isDirectMode())
+    {
+        const auto previousSize = getBufferSizeSamples();
+        auto setup = directManager.getAudioDeviceSetup();
+        setup.bufferSize = newSizeInSamples;
+
+        if (auto error = directManager.setAudioDeviceSetup (setup, true); error.isNotEmpty())
+        {
+            if (previousSize > 0)
+            {
+                auto rollback = directManager.getAudioDeviceSetup();
+                rollback.bufferSize = previousSize;
+                directManager.setAudioDeviceSetup (rollback, true);
+                requestedDirectBufferSize = previousSize;
+            }
+
+            return trf ("Direct: %1", error);
+        }
+
+        if (auto* device = directManager.getCurrentAudioDevice())
+            requestedDirectBufferSize = device->getCurrentBufferSizeSamples();
+
+        return {};
+    }
+
+    requestedBufferSize = newSizeInSamples;
+
     juce::String problems;
 
     auto inputSetup = inputManager.getAudioDeviceSetup();
@@ -406,7 +806,7 @@ juce::String AudioEngine::setBufferSize (int newSizeInSamples)
 //==============================================================================
 double AudioEngine::getInputLatencyMs() const noexcept
 {
-    auto* device = inputManager.getCurrentAudioDevice();
+    auto* device = (isDirectMode() ? directManager : inputManager).getCurrentAudioDevice();
     if (device == nullptr)
         return 0.0;
 
@@ -414,18 +814,23 @@ double AudioEngine::getInputLatencyMs() const noexcept
     if (rate <= 0.0)
         return 0.0;
 
-    // The driver reports the buffer delay it adds; JUCE exposes it in samples via
-    // getInputLatencyInSamples(), and the buffer itself has to be counted once more
-    // because a callback only sees a full block.
     const auto driverSamples = std::max (0, device->getInputLatencyInSamples());
-    const auto blockSamples  = device->getCurrentBufferSizeSamples();
+
+    /*  In direct mode the driver's figure already contains the block that is
+        being filled, and the callback hands it straight to the chain. In the
+        normal path a second block is waiting in the ring, so it is added. */
+    if (isDirectMode())
+        return static_cast<double> (driverSamples) * 1000.0 / rate;
+
+    const auto blockSamples = device->getCurrentBufferSizeSamples();
 
     return static_cast<double> (driverSamples + blockSamples) * 1000.0 / rate;
 }
 
 double AudioEngine::getOutputLatencyMs() const noexcept
 {
-    auto* device = outputManager.getCurrentAudioDevice();
+    auto& manager = isDirectMode() ? directManager : outputManager;
+    auto* device = manager.getCurrentAudioDevice();
     if (device == nullptr)
         return 0.0;
 
@@ -434,7 +839,11 @@ double AudioEngine::getOutputLatencyMs() const noexcept
         return 0.0;
 
     const auto driverSamples = std::max (0, device->getOutputLatencyInSamples());
-    const auto blockSamples  = device->getCurrentBufferSizeSamples();
+
+    if (isDirectMode())
+        return static_cast<double> (driverSamples) * 1000.0 / rate;
+
+    const auto blockSamples = device->getCurrentBufferSizeSamples();
 
     // One extra block is the price of the ring that decouples the two threads: the
     // output callback cannot see input that has not arrived as a whole block yet.
@@ -462,7 +871,7 @@ int AudioEngine::getVirtualDrops() const noexcept
 
 float AudioEngine::getCpuUsage() const noexcept
 {
-    return static_cast<float> (outputManager.getCpuUsage());
+    return static_cast<float> ((isDirectMode() ? directManager : outputManager).getCpuUsage());
 }
 
 //==============================================================================
@@ -611,6 +1020,12 @@ void AudioEngine::audioDeviceAboutToStart (juce::AudioIODevice* device)
     outputSampleRate.store (rate, std::memory_order_relaxed);
     outputBlockSize.store (block, std::memory_order_relaxed);
 
+    /*  One device, one clock: the direct callback gets its samples straight from
+        the hardware, so there is no InputRingWriter to publish this. Setting it
+        keeps getInputSampleRate() from reporting zero while the guitar is audible. */
+    if (directActive.load (std::memory_order_relaxed))
+        inputSampleRate.store (rate, std::memory_order_relaxed);
+
     // The compensation ramp is defined in seconds, so its per-sample step depends
     // on the rate; recompute it for the device that is starting.
     dryDelayStep = 0.0f;
@@ -662,6 +1077,25 @@ void AudioEngine::audioDeviceAboutToStart (juce::AudioIODevice* device)
 void AudioEngine::audioDeviceStopped()
 {
     running.store (false, std::memory_order_relaxed);
+}
+
+void AudioEngine::fillDirectBuffer (const float* const* inputChannelData, int numInputChannels,
+                                    juce::AudioBuffer<float>& destination, int numSamples) noexcept
+{
+    /*  Stereo chain from a mono guitar: duplicate channel 0 rather than leaving
+        the right side silent. The same rule the ring writer applies. */
+    destination.clear();
+
+    if (inputChannelData == nullptr || numInputChannels <= 0)
+        return;
+
+    for (int c = 0; c < chainChannels; ++c)
+    {
+        const auto* source = inputChannelData[numInputChannels > c ? c : 0];
+
+        if (source != nullptr)
+            std::copy_n (source, numSamples, destination.getWritePointer (c));
+    }
 }
 
 void AudioEngine::fillChainBuffer (juce::AudioBuffer<float>& destination, int numSamples) noexcept
@@ -823,7 +1257,8 @@ void AudioEngine::setVirtualOutputEnabled (bool shouldStream)
     router->setEnabled (shouldStream);
 }
 
-void AudioEngine::audioDeviceIOCallbackWithContext (const float* const*, int,
+void AudioEngine::audioDeviceIOCallbackWithContext (const float* const* inputChannelData,
+                                                    int numInputChannels,
                                                     float* const* outputChannelData,
                                                     int numOutputChannels,
                                                     int numSamples,
@@ -869,7 +1304,10 @@ void AudioEngine::audioDeviceIOCallbackWithContext (const float* const*, int,
     // 1. Guitar in, trimmed, and copied before any effect touches it: that copy is
     //    the dry side of the global Mix.
     //--------------------------------------------------------------------------
-    fillChainBuffer (chainBuffer, numSamples);
+    if (directActive.load (std::memory_order_relaxed))
+        fillDirectBuffer (inputChannelData, numInputChannels, chainBuffer, numSamples);
+    else
+        fillChainBuffer (chainBuffer, numSamples);
 
     const auto trim = dbToGain (inputTrimDb.load (std::memory_order_relaxed));
 
@@ -1051,6 +1489,8 @@ bool AudioEngine::loadFromFile (Settings& result)
         else if (key == "outputDevice") result.outputDevice = value;
         else if (key == "sampleRate")  result.sampleRate = value.getDoubleValue();
         else if (key == "bufferSize")  result.bufferSize = value.getIntValue();
+        else if (key == "directBuffer") result.directBufferSize = value.getIntValue();
+        else if (key == "direct")      result.direct = value.getIntValue() != 0;
         else if (key == "monitor")     result.monitor = value.getIntValue() != 0;
         else if (key == "globalWet")   result.globalWet = value.getFloatValue();
         else if (key == "inputTrimDb") result.inputTrimDb = value.getFloatValue();
@@ -1093,10 +1533,20 @@ void AudioEngine::saveSettings()
     lines.add ("inputDevice=" + inputDeviceName);
     lines.add ("outputType=" + outputTypeName);
     lines.add ("outputDevice=" + outputDeviceName);
-    const auto rate  = isRunning() || requestedSampleRate <= 0.0 ? getSampleRate() : requestedSampleRate;
-    const auto block = isRunning() || requestedBufferSize <= 0 ? getBufferSizeSamples() : requestedBufferSize;
+    const auto rate = getSampleRate();
+
+    /*  While direct mode is on the live block is the duplex one (often 144), and
+        saving it as the normal path's buffer would make the next launch open the
+        recording pair at a size its shared driver does not support. Keep the two
+        preferences apart. */
+    const auto block = requestedBufferSize > 0 ? requestedBufferSize : getBufferSizeSamples();
+    const auto directBlock = requestedDirectBufferSize > 0 ? requestedDirectBufferSize
+                                                           : getBufferSizeSamples();
+
     lines.add ("sampleRate=" + juce::String (rate));
     lines.add ("bufferSize=" + juce::String (block));
+    lines.add ("direct=" + juce::String (isDirectMode() ? 1 : 0));
+    lines.add ("directBuffer=" + juce::String (directBlock));
     lines.add ("monitor=" + juce::String (isMonitorEnabled() ? 1 : 0));
     lines.add ("globalWet=" + juce::String (getGlobalWet(), 4));
     lines.add ("inputTrimDb=" + juce::String (getInputTrimDb(), 2));
@@ -1166,7 +1616,8 @@ juce::String AudioEngine::applyAndStart (const Settings& settings)
                                 settings.outputType, settings.outputDevice,
                                 settings.sampleRate, settings.bufferSize);
 
-    applySettings (settings);
+    if (auto settingsError = applySettings (settings); settingsError.isNotEmpty())
+        problems << settingsError << "\n";
 
     // The cabinet's response choice is not a numeric parameter, so a user change
     // has to save the file itself. Wired after applySettings() so restoring a
@@ -1245,7 +1696,7 @@ bool matchesLegacyDefaults (int type, const juce::StringArray& tokens)
 }
 } // namespace
 
-void AudioEngine::applySettings (const Settings& settings)
+juce::String AudioEngine::applySettings (const Settings& settings)
 {
     setMonitorEnabled (settings.monitor);
     setGlobalWet (settings.globalWet);
@@ -1341,6 +1792,17 @@ void AudioEngine::applySettings (const Settings& settings)
 
     if (settings.midiDevice.isNotEmpty())
         openExpressionMidiInput (settings.midiDevice);
+
+    /*  Direct mode last: it closes and reopens devices, so everything that needs
+        the normal pair (the plugin's prepare, the MIDI port) has already run.
+        A direct attempt that fails leaves the normal path restored and reports
+        why, instead of silently starting in the wrong mode. */
+    requestedDirectBufferSize = settings.directBufferSize;
+
+    if (settings.direct)
+        return setDirectMode (true);
+
+    return {};
 }
 
 } // namespace pedal

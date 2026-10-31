@@ -1,91 +1,26 @@
 #pragma once
 
 #include "Effects/PedalEffect.h"
-#include "Effects/Pitch/SubOctaveDivider.h"
+#include "Effects/Pitch/PolyphonicOctaver.h"
 
 #include <vector>
-#include <algorithm>
 
 /*==============================================================================
   Octaver
 
-  Two analogue-style engines, because the two directions are not the same
-  problem and neither is a pitch shifter:
+  One polyphonic engine for both directions. The previous version used a
+  zero-crossing divider (monophonic) and a full-wave rectifier (intermodulation
+  on chords); on a real guitar's harmonics the divider toggled several times per
+  period and the result was heard as buzz. This now uses the phase-scaling
+  filterbank in PolyphonicOctaver: analytic bands, no note tracking, no grain
+  windows, and both octaves follow chords.
 
-    Octave Down  - SubOctaveDivider. A hard wired frequency divider: exact half
-                   the input frequency, no look ahead, no granular smear.
-
-    Octave Up    - full-wave rectifier, the Octavia/Tysegue trick. Rectifying an
-                   AC signal doubles its fundamental and adds even harmonics;
-                   a 6 kHz input filter and a 4.8 kHz output filter keep the
-                   folded harmonics out of the alias band. This is what an
-                   octave-up pedal sounds like, and unlike a granular shifter it
-                   locks instantly and has no window warble.
-
-  Both paths track a single note. The dry signal is the Blend knob's complement,
-  so Blend left of centre is the direct guitar, right of centre is the octaves.
-  The divider and the rectifier have no look-ahead, so the effect reports zero
-  latency and can sit anywhere in the chain without delaying the dry path.
+  Down and Up are independent levels into the same wet bus. Blend is the usual
+  dry/wet control. The engine has no look-ahead, so it reports zero latency and
+  can sit anywhere in the chain.
 ==============================================================================*/
 namespace pedal
 {
-
-class OctaveUpRectifier
-{
-public:
-    void prepare (double newSampleRate)
-    {
-        sampleRate = newSampleRate;
-
-        inputFilter.setLowPass (sampleRate, 6000.0);
-        inputFilter.reset();
-        outputFilter.setLowPass (sampleRate, 4800.0);
-        outputFilter.reset();
-        dcBlocker.setHighPass (sampleRate, 60.0);
-        dcBlocker.reset();
-
-        envelope.setTimes (sampleRate, 3.0f, 120.0f);
-        envelope.reset();
-        gate = 0.0f;
-    }
-
-    void reset() noexcept
-    {
-        inputFilter.reset();
-        outputFilter.reset();
-        dcBlocker.reset();
-        envelope.reset();
-        gate = 0.0f;
-    }
-
-    /** in/out are mono. level is the Up knob as 0..1. */
-    void process (const float* in, float* out, int numSamples, float level) noexcept
-    {
-        const auto gateCoeff = timeCoefficient (sampleRate, 25.0f);
-
-        for (int i = 0; i < numSamples; ++i)
-        {
-            const auto filtered = inputFilter.process (in[i]);
-            const auto rectified = std::abs (filtered);
-
-            // The rectified waveform has a DC term proportional to level; a 60 Hz
-            // high pass removes it without eating the guitar's low E octave.
-            const auto shaped = outputFilter.process (dcBlocker.process (rectified));
-
-            const auto magnitude = envelope.process (std::abs (filtered));
-            const auto target = clamp01 (magnitude * 5.0f);
-            gate += gateCoeff * (target - gate);
-
-            out[i] = shaped * gate * level;
-        }
-    }
-
-private:
-    double sampleRate = 44100.0;
-    OnePole inputFilter, outputFilter, dcBlocker;
-    EnvelopeFollower envelope;
-    float gate = 0.0f;
-};
 
 class OctaveEffect : public PedalEffect
 {
@@ -104,8 +39,7 @@ public:
 
     void doPrepare (double, int) override
     {
-        divider.prepare (sampleRate, blockSize);
-        rectifier.prepare (sampleRate);
+        engine.prepare (sampleRate);
 
         mono.assign (static_cast<std::size_t> (blockSize), 0.0f);
         sub.assign (static_cast<std::size_t> (blockSize), 0.0f);
@@ -114,13 +48,12 @@ public:
 
     void resetState() noexcept override
     {
-        divider.reset();
-        rectifier.reset();
+        engine.reset();
     }
 
     juce::String getWarningText() const override
     {
-        return tr ("Single notes track best - the divider and the rectifier are both monophonic.");
+        return tr ("Polyphonic octaver - both octaves follow chords, with no note tracking.");
     }
 
     void process (juce::AudioBuffer<float>& audio) override
@@ -135,8 +68,8 @@ public:
         for (int i = 0; i < numSamples; ++i)
             mono[static_cast<std::size_t> (i)] = 0.5f * (left[i] + right[i]);
 
-        divider.process (mono.data(), sub.data(), numSamples, downLevel);
-        rectifier.process (mono.data(), upper.data(), numSamples, upLevel);
+        engine.setLevels (upLevel, downLevel);
+        engine.process (mono.data(), upper.data(), sub.data(), numSamples);
 
         auto& wet = wetBufferForBlock();
 
@@ -152,8 +85,7 @@ public:
     }
 
 private:
-    SubOctaveDivider divider;
-    OctaveUpRectifier rectifier;
+    PolyphonicOctaver engine;
     std::vector<float> mono, sub, upper;
 };
 

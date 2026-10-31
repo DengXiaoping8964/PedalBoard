@@ -109,5 +109,46 @@ int main()
     reportCurrent (inputManager, "input manager, after 400 ms");
     reportCurrent (outputManager, "output manager, after 400 ms");
 
+    auto tryOutput = [] (const juce::String& typeName, const juce::String& match, double rate, int buffer)
+    {
+        juce::AudioDeviceManager manager;
+        const auto initError = manager.initialise (0, 2, nullptr, false);
+
+        manager.setCurrentAudioDeviceType (typeName, true);
+        const auto selectedType = manager.getCurrentAudioDeviceType();
+
+        juce::String name;
+        for (auto* type : manager.getAvailableDeviceTypes())
+        {
+            if (type == nullptr || type->getTypeName() != typeName)
+                continue;
+
+            for (auto& candidate : type->getDeviceNames (false))
+                if (candidate.containsIgnoreCase (match))
+                    name = candidate;
+        }
+
+        auto setup = manager.getAudioDeviceSetup();
+        setup.outputDeviceName = name;
+        setup.useDefaultOutputChannels = true;
+        setup.sampleRate = rate;
+        setup.bufferSize = buffer;
+        const auto setupError = manager.setAudioDeviceSetup (setup, true);
+
+        auto* device = manager.getCurrentAudioDevice();
+        std::printf ("\n[try output] type \"%s\" match \"%s\" -> \"%s\" %g Hz %d samples\n",
+                     typeName.toRawUTF8(), match.toRawUTF8(), name.toRawUTF8(), rate, buffer);
+        std::printf ("  initialise: \"%s\"  type: \"%s\"  setSetup: \"%s\"\n",
+                     initError.toRawUTF8(), selectedType.toRawUTF8(), setupError.toRawUTF8());
+        std::printf ("  result: %s\n", device != nullptr
+                                         ? (device->getName().toRawUTF8())
+                                         : "NO DEVICE");
+    };
+
+    tryOutput ("Windows Audio (Exclusive Mode)", "Momix-Cab", 48000.0, 144);
+    tryOutput ("Windows Audio (Exclusive Mode)", "Momix-Cab", 48000.0, 480);
+    tryOutput ("Windows Audio", "Momix-Cab", 48000.0, 480);
+    tryOutput ("Windows Audio", "Conexant", 48000.0, 480);
+
     return 0;
 }

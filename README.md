@@ -3,7 +3,10 @@
 **官网 · Official website: <https://dengxiaoping8964.github.io/PedalBoard/>**
 
 A Windows-only guitar pedalboard: **guitar in → reorderable effect chain → physical
-monitor out + a VB-CABLE virtual output a recording program can see.**
+monitor out + a VB-CABLE virtual output a recording program can see.** A **low-latency
+direct mode** can collapse the physical side onto one duplex device for live playing
+through the interface's own speakers - 12 ms measured round trip at 48 kHz, versus
+50 ms on the normal two-device path.
 
 The 22 built-in effects are real DSP implementations with live knobs and a real
 bypass, and they are joined by two ways to build a custom one: a composed **Custom
@@ -44,12 +47,13 @@ Tags: ✅ verified by a command or a capture · ⚠️ compiled, not yet verifie
 | ✅ | First-run language prompt, and switching back | clicked through with injected mouse input; English → 中文 → English verified on the panel, the cards, the add-effect menu and the status bar |
 | ✅ | Every JUCE 8.0.15 API touched | read against a real 8.0.15 checkout, file by file, before use |
 | ✅ | The three built-in impulse responses | generated and then measured: header bytes, peak, RMS, FFT band profile, spectral centroid, −20 dB decay time. `Resources/make_irs.mjs` prints all of it and refuses to write silent or look-alike responses |
-| ✅ | The pitch shifter, the sub-octave divider, all 24 effect types at their parameter extremes, the Custom Chain composition, and the ring buffer's overflow/underflow policy | `_tests\dsp_probe.exe`: 376 passes, 0 failures. See [The DSP and ring-buffer bench](#the-dsp-and-ring-buffer-bench) - it is where five real defects were found, none of them visible in the UI |
+| ✅ | The pitch shifter, the polyphonic octaver, all 24 effect types at their parameter extremes, the Custom Chain composition, and the ring buffer's overflow/underflow policy | `_tests\dsp_probe.exe`: 377 passes, 0 failures. See [The DSP and ring-buffer bench](#the-dsp-and-ring-buffer-bench) - it is where five real defects were found, none of them visible in the UI |
 | ✅ | Loading a real VST3 effect, its editor and its state | The installed **Auburn Sounds Panagement 2** (single-file .vst3, 46 parameters, 3 samples latency) was loaded from `PedalBoardData\PedalBoard.settings`. Card mapped 8 of 46 parameters (bypass excluded); moving the first macro changed the plugin's `Far` parameter and the editor's FAR knob visibly moved; the 455-byte `customPlugin.state` (382-byte plugin blob + path header) was written and restored; an old state file without the path header was rejected and the plugin loaded at its own defaults; closing the editor, closing the main window with it open, and restarting all completed without a crash. `_tests\vst3_probe.exe` independently measured in-RMS 0.05782, max sample change 0.19591, state round-trip 382 bytes |
 | ⛔ | Hearing the Custom Chain or a hosted plugin through a guitar | no listening test is possible from here; the bench and the probe measure signals, not taste |
 | ⚠️ | The lock-free ring arithmetic | now measured, not just inspected: a sustained worst-case read (192 kHz input into a 44.1 kHz chain) never overflows the configured capacity, and a 17-minute idle soak against the real devices reported 0 overflows on both rings and exactly one underflow on each - the one-off phase offset while the two device callbacks start - with the counters unchanged at minutes 2, 7 and 17. What is *not* measured is behaviour under a scheduling hiccup on a loaded machine |
 | ⚠️ | Real-time safety of the audio path | by inspection: allocation/IO/lock sites are enumerated in [Audio thread rules](#audio-thread-rules-the-code-actually-follows). One violation of the same family already caused a crash (see below), so inspection is not sufficient |
 | ⛔ | A guitar coming out of the monitor device | no listening test is possible from here. Latency and level are read from the API, not from sound |
+| ✅ | Low-latency direct mode through the guitar interface | `_tests\duplex_probe.exe` and the app itself, using the **JOYO Momix-Cab** endpoints at 48 kHz. Normal two-device path at 480 samples reports input 20.0 + monitor 30.0 ms; direct mode opens one duplex **Windows Audio (Exclusive Mode)** stream at 144 samples and reports **12.0 ms round trip** (6.0 in + 6.0 out), xruns 0 after 8 s and across two on/off switches; changing the LATENCY box to 256 gives 21.3 ms. Captured screenshots of both states. A guitar through it is still ⛔ (no listening test) |
 | ✅ | The virtual recording path | VB-CABLE is installed on this machine (this row was ⛔ when it was not). `CABLE Input` opens at 48000 Hz / 480 samples over Windows Audio and the app reports 40 ms. `_tests\virtual_path_probe.exe` pushes a 440 Hz sine through the real `VBCableRouter` and ring and records `CABLE Output`: RMS 0.1768, peak 0.2500 and a 440 Hz amplitude of 0.2500 for a 0.25 sine. A real guitar through the chain is still ⛔ |
 | ⚠️ | Two clocks staying aligned over hours | 2.2 s of the probe and a 17-minute app soak are measured; hour-scale drift between the speaker clock and the cable clock is not |
 | ⛔ | That the chain sounds like what its names claim | needs ears |
@@ -237,6 +241,8 @@ checker, and a rebuilt app driven with injected mouse input:
 
 Three `AudioDeviceManager` instances, three threads, joined only by two lock-free
 single-producer/single-consumer rings and atomics. **No thread ever waits on another.**
+Low-latency direct mode adds a fourth manager and swaps its one duplex callback in
+place of the input and monitor pair; the cable manager and its ring keep running.
 
 ```
 guitar ──► inputManager callback ──► inputRing ──┐
@@ -259,12 +265,80 @@ guitar ──► inputManager callback ──► inputRing ──┐
 * **Path C - global dry/wet.** The dry side is a copy of the raw input delayed by the
   chain's summed group delay, through a ramped two-tap fractional delay line, so the
   blend cannot turn into a comb filter.
+* **Path D - low-latency direct (optional).** The DIRECT switch closes the two normal
+  devices and opens the selected input and monitor endpoints as one duplex device. Its
+  callback receives the guitar and writes the processed block to the speakers without
+  the input ring or the second device thread; the virtual ring is still fed. The buffer
+  box becomes the LATENCY control. See [Low-latency direct mode](#low-latency-direct-mode).
 
 Chain order is published to the audio thread through a seqlock
 (`SeqSnapshot<ChainSnapshot>`): the writer never blocks, the reader copies 16 pointers
 once per block and retries only if it straddled a write. Effects are instantiated once
 each at construction and live for the process, so reordering republishes pointers and
 cannot invalidate one that is in use.
+
+### Low-latency direct mode
+
+The **DIRECT / 直通** switch (persisted as `direct=1`) is for the case where a
+player plugs speakers or headphones into the guitar interface and wants to hear the
+chain while playing. It is not a dry bypass: the effects still run, but the device
+side is reduced to the shortest path software can offer.
+
+* One duplex `AudioDeviceManager` opens the selected **input** and **monitor output**.
+  Both must belong to the same interface - the text in parentheses in both Windows
+  device names must match - because endpoints from two interfaces have no common
+  clock. If the monitor selector is still on a streaming/CABLE endpoint while the
+  player has plugged speakers into the interface, the switch adopts the interface's
+  own matching output and the top bar shows the new name. If no such endpoint exists,
+  it refuses instead of opening a drifting stream.
+* The manager's one callback receives the guitar and writes the processed block
+  directly. The input ring, the sample-rate bridge, and the second device thread are
+  all out of the monitor path: latency is the driver's input buffer plus its output
+  buffer, not two ring blocks on top.
+* Driver modes are tried in this order: **Windows Audio (Exclusive Mode)**, **Windows
+  Audio (Low Latency Mode)**, **Windows Audio**, then DirectSound/MME. The first mode
+  that opens both endpoints wins; the status line names the one that is running.
+* The BUFFER box is relabelled **LATENCY** while the mode is on and lists the sizes the
+  open driver really offers. On first use it starts at the smallest size at or above
+  128 samples, remembers the last choice in `directBuffer`, and can be changed live.
+  `xruns` is read from the device and shown next to the round trip; that counter is the
+  stability check.
+* The virtual path keeps working: the direct callback pushes the same processed block
+  into `virtualRing`, so a recording app still sees it while the room is live.
+* Device changes leave direct mode first, then reopen the normal pair; the switch does
+  not silently apply a new device to a stream that was opened for the old one.
+* A broken system default output no longer aborts startup. The two managers record
+  that error and still open the input and monitor devices named in the settings file;
+  before 1.1.0 the first failed default open returned early and abandoned a chosen
+  monitor that could open perfectly well. This was found when a render endpoint was
+  left stuck after forced process kills - the app showed an empty monitoring path even
+  though the probe could open the Conexant output.
+
+Measured on the JOYO **Momix-Cab** at 48 kHz (driver-reported, not guessed):
+
+| Path | Buffer | Input | Output | Round trip |
+| --- | --- | --- | --- | --- |
+| Normal two-device (Windows Audio shared) | 480 | 20.0 ms | 30.0 ms | **50.0 ms** |
+| Direct (Windows Audio Exclusive) | 144 | 6.0 ms | 6.0 ms | **12.0 ms** |
+| Direct (Windows Audio Exclusive) | 256 | 10.7 ms | 10.7 ms | **21.3 ms** |
+
+`_tests\duplex_probe.exe` re-measures the same thing from the raw API. At 144 samples
+the app held **0 xruns** across two on/off transitions and 8 s of playback, with the
+two effect cards at 0.1 % CPU. The status line reads that counter from the driver, so
+stability is visible rather than declared: after a later session of forced process
+kills the same machine left one render endpoint stuck, and direct-mode xruns climbed
+until Windows was restarted. The counter is the check; 256 samples is the safer
+starting point while the buffer choice is being tested. What this mode does **not**
+remove is effect latency: the Pitch Shifter reports 80 ms and the Cabinet 512 samples,
+and the engine still delays the dry side to keep the blend phase-correct. For true
+zero latency, use the interface's own hardware direct-monitor switch; any software
+path crosses at least two driver buffers.
+
+An interface's matching output has a different Windows name from its input - for the
+Momix-Cab it is `麦克风 (Momix-Cab)` and `扬声器 (Momix-Cab)`. Pressing DIRECT finds
+that output automatically; if the interface exposes no output at all (or the input is
+not an interface), the mode refuses with an instruction rather than sending the guitar
+somewhere the player cannot hear it.
 
 ---
 
@@ -433,7 +507,7 @@ cmake --build D:\PedalBoard\_tests\build --config Release --target dsp_probe
 D:\PedalBoard\_tests\build\Release\dsp_probe.exe
 ```
 
-It exits non-zero if anything fails, so it can gate a build. Current state: **376
+It exits non-zero if anything fails, so it can gate a build. Current state: **377
 passes, 0 failures**, covering
 
 * the spectral shifter's latency against `getLatencySamples()`, by cross-correlating
@@ -442,9 +516,10 @@ passes, 0 failures**, covering
   the un-shifted leak reported separately - every case measures 0.0 cents off, the
   next strongest component between 41 and 118 dB below (the +12 case: 220.50 Hz,
   leak -105 dB);
-* the sub-octave divider at 110, 330 and 82.4 Hz - within 2.5 cents of exactly half,
-  at full level;
-* the upper octave is a rectifier: 220 Hz in, 440.0 Hz out, at full level;
+* the polyphonic octaver at 110, 330 and 82.4 Hz - both directions within a few
+  cents of exactly half and double, at usable level;
+* a two-note 220 + 330 Hz chord: 110/165 Hz down and 440/660 Hz up both survive,
+  so the octave is measured as polyphonic rather than assumed to be;
 * the acoustic-voicing gate: at -20 dBFS the Overdrive default measures 7.6 % THD
   and the Distortion default 29.5 %, and the older 36.5 % vs 22.1 % inversion fails
   the bench;
@@ -681,7 +756,7 @@ Looper. A type can appear once (one instance each), and the chain holds 16.
 | Phaser | hand-written all-pass cascade with a Centre frequency and stereo phase spread; `juce::dsp::Phaser` cannot change its stage count | Rate, Depth, Feedback, Stages (4/6/8/12), Mix, Centre, Spread |
 | Tremolo | amplitude modulation, sine/triangle/square, stereo phase spread; default depth 90 % | Rate, Depth, Shape, Spread |
 | Vibrato | short delay line modulated in time - pitch moves, level does not - cubic taps and stereo phase spread | Rate, Depth, Centre, Mix, Spread |
-| Octave | zero-crossing sub-octave divider + **full-wave rectifier for the upper octave** (Octavia-style, no grain window); **monophonic, and the card says so** | Down, Up, Blend |
+| Octave | polyphonic phase-scaling filterbank (80 analytic bands): independent -1/+1 octave voices, no note tracking, no grain window; **chords tracked**; gated and low-passed | Down, Up, Blend |
 | Pitch Shifter | **Signalsmith Stretch 1.3.2** spectral pitch shifter (MIT), 80 ms analysis / 20 ms hop, independent Formant; fixed latency reported and verified against noise correlation | Semitones, Formant, Mix |
 | Delay | 1 ms - 2 s, feedback, tone, true equal-time ping-pong, tape wow/flutter; cubic taps and **Mod defaults to 0** so a clean repeat is the default | Time, Feedback, Tone, Mix, Mode, Mod |
 | Reverb | Dattorro plate network with pre-delay, damping and modulated tank all-passes | Decay, Damping, Width, Mix, Pre-Delay |
@@ -799,11 +874,13 @@ published and open implementations rather than invented from scratch:
   band gain.
 * **Overdrive** - tube-screamer-style fixed 720 Hz mid hump after the clipper;
   **Fuzz** - Fuzz Face input capacitance modelled as a 3.5 kHz roll-off before
-  the gain stage; **octave up** - the full-wave rectifier used by the Octavia
-  and Tysegue, with a 6 kHz input filter and a 4.8 kHz output filter to keep the
-  folded harmonics out of the alias band. Circuit analyses: Electrosmash (Tube
-  Screamer, Fuzz Face, Octavia), anasounds CE-2 teardown, Electric Druid's BBD
-  clock notes.
+  the gain stage. **Octave** - the analytic-band phase-scaling method from
+  Etienne Thuillier, *Real-Time Polyphonic Octave Doubling for the Guitar*
+  (Aalto, 2016), with the 80-band implementation cross-checked against the MIT
+  Terrarium poly-octave. It tracks chords without a zero-crossing divider and
+  does not fold the spectrum like a rectifier. Other circuit analyses:
+  Electrosmash (Tube Screamer, Fuzz Face), anasounds CE-2 teardown, Electric
+  Druid's BBD clock notes.
 * **Pitch Shifter** - Signalsmith Stretch 1.3.2 (MIT), configured for spectral
   pitch/formant shifting at 80 ms block / 20 ms hop. This replaces the
   hand-written granular engine. Measured: 110 Hz +12 st -> 220.50 Hz, leak
@@ -852,7 +929,8 @@ Sources:
 [BBD clock notes](https://electricdruid.net/weird-wiggles-bbd-clock-modulation/) ·
 [Freeverb3 reverb notes](https://freeverb3-vst.sourceforge.io/doc/Reverberation%20algorithms.pdf) ·
 [Signalsmith Stretch](https://github.com/Signalsmith-Audio/signalsmith-stretch) ·
-[Octavia circuit notes](https://www.electrosmash.com/tube-screamer-analysis)
+[Thuillier 2016](https://aaltodoc.aalto.fi/items/6fd2cfc9-db61-4b0a-b11f-ea8c2925509f) ·
+[Terrarium poly-octave (MIT)](https://github.com/schult/terrarium-poly-octave)
 
 ---
 
@@ -863,8 +941,8 @@ affected file says which JUCE file was read to establish it.
 
 1. **`juce::dsp::PitchShifter` does not exist in JUCE 8** (it was removed with the old
    `juce::PitchShifter` processor). → Signalsmith Stretch (MIT) for the spectral pitch
-   shifter, a zero-crossing divider down and a full-wave rectifier up for the octave.
-   *Boundary:* the octave remains monophonic; the pitch shifter tracks chords but has
+   shifter, and a polyphonic phase-scaling filterbank (Thuillier 2016) for the octave.
+   *Boundary:* the octave tracks chords now; the pitch shifter tracks chords but has
    the 80 ms latency the card reports.
 2. **`juce::dsp::NoiseGate` exposes only Threshold/Attack/Release** - no Hold, no Range
    (`widgets/juce_NoiseGate.h`). → hand-written envelope-follower gate.
@@ -991,7 +1069,9 @@ The constraints are structural, not aspirational:
 
 Settings live in `PedalBoardData/PedalBoard.settings` next to the executable - plain
 `key=value` text - specifically so nothing is written to `%APPDATA%` and the D:-only
-rule holds. The loaded plugin's path is one key in that file; its opaque binary state
+rule holds. Direct mode keeps `direct=1` and its own `directBuffer=144` beside the
+normal `bufferSize`, so switching the live path off does not force a 144-sample block
+onto a shared-mode recording device that only accepts 480. The loaded plugin's path is one key in that file; its opaque binary state
 is the sibling `PedalBoardData/customPlugin.state`, so a change made in the plugin's
 own editor survives a restart even though it never touches the eight macro atomics.
 
@@ -1003,9 +1083,10 @@ One window, dark theme, no `AudioDeviceSelectorComponent`.
 
 * **Top bar.** Input type + input device, output type + output device (four independent
   selectors), buffer size and sample rate with the buffer shown in ms, a Devices button.
-  Second row: the big **MONITOR** switch, **TO CABLE**, global Dry/Wet, Input Trim,
-  Expression (read-only while a MIDI pedal is driving it), and two peak meters - one for
-  the physical path, one for the virtual path.
+  Second row: the big **MONITOR** switch, **TO CABLE**, **DIRECT** (low-latency direct
+  mode), global Dry/Wet, Input Trim, Expression (read-only while a MIDI pedal is
+  driving it), and two peak meters - one for the physical path, one for the virtual path. The buffer box is
+  captioned **LATENCY** whenever direct mode is running.
 * **Chain.** Vertical column of cards in a scrollable viewport. Each card: slot number,
   title, bypass, up/down/remove, its 2-8 knobs or step selectors, an action row where the
   effect needs one (Looper transport, Cabinet IR picker), and a status/warning line. Drag
@@ -1016,7 +1097,10 @@ One window, dark theme, no `AudioDeviceSelectorComponent`.
   model that produced the estimate, then CPU, sample rate, block size, slot count and the
   input drops split into overflow (the producer ran ahead) and underflow (the consumer
   starved) plus the virtual drops split the same way, then any start-up problem
-  verbatim. All four stay at zero while the engine is healthy; a non-zero overflow and
+  verbatim. In direct mode the latency line becomes one **round trip** (driver input +
+  driver output), the buffer, the device's own xrun count, and the driver mode that
+  opened - e.g. `Direct round-trip 12.0 ms (in 6.0 + out 6.0) chain 0.1 ms buffer 144
+  xruns 0 [Windows Audio (Exclusive Mode)]`. All four stay at zero while the engine is healthy; a non-zero overflow and
   a non-zero underflow have different causes and different fixes, which is why they are
   not summed.
 * **First run.** The language question, then the device panel: it appears before anything
@@ -1034,7 +1118,10 @@ One window, dark theme, no `AudioDeviceSelectorComponent`.
   problem if anything here needed bit-exact maths. It does not.
 * The looper's undo is one level deep, and tape length is fixed at 30 s.
 * Latency figures are driver-reported where the driver tells the truth (WASAPI/ASIO) and
-  buffer-derived where it does not (MME).
+  buffer-derived where it does not (MME). Even direct mode is a software path: its
+  12 ms is the driver's two buffers, and effects with their own latency (Pitch Shifter
+  80 ms, Cabinet 512 samples) add to it exactly as the chain line says. True zero
+  latency is only the interface's hardware direct-monitor switch.
 * Reordering during playback can cost one block at the switch point; the seqlock makes
   it a torn-block risk, not a race, and the effect objects are never destroyed.
 * **Acoustic to Electric is a colouring filter plus harmonic excitation, not a

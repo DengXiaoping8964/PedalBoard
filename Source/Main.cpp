@@ -119,7 +119,7 @@ public:
     ~PedalBoardApplication() override = default;
 
     const juce::String getApplicationName() override    { return "PedalBoard"; }
-    const juce::String getApplicationVersion() override { return "1.0.0"; }
+    const juce::String getApplicationVersion() override { return "1.1.0"; }
 
     /** One instance per machine: two processes opening the same guitar input and
         the same CABLE Input stream would fight over both. */

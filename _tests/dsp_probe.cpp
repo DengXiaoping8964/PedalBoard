@@ -33,7 +33,7 @@
 #include "Common/PedalLockFree.h"
 #include "Effects/EffectFactory.h"
 #include "Effects/Pitch/PitchShifterEffect.h"
-#include "Effects/Pitch/SubOctaveDivider.h"
+#include "Effects/Pitch/PolyphonicOctaver.h"
 
 #include <algorithm>
 #include <atomic>
@@ -331,51 +331,113 @@ void checkPitch (double sr, double freq, double semitones)
 }
 
 //==============================================================================
-//  B2 - the sub-octave divider
+//  B2 - the polyphonic octaver
 //==============================================================================
-void checkDivider (double sr, double freq)
+void checkOctaves (double sr, double freq)
 {
-    const auto total = static_cast<std::size_t> (2.0 * sr);
+    const auto total = static_cast<std::size_t> (2.5 * sr);
     std::vector<float> in (total);
 
     for (std::size_t i = 0; i < total; ++i)
         in[i] = 0.35f * static_cast<float> (std::sin (2.0 * 3.14159265358979323846 * freq * i / sr));
 
-    SubOctaveDivider divider;
-    divider.prepare (sr, kBlock);
+    PolyphonicOctaver octaver;
+    octaver.prepare (sr);
 
-    std::vector<float> out (total, 0.0f);
+    std::vector<float> down (total, 0.0f), up (total, 0.0f);
     std::vector<float> inBlk (static_cast<std::size_t> (kBlock));
-    std::vector<float> outBlk (static_cast<std::size_t> (kBlock));
+    std::vector<float> upBlk (static_cast<std::size_t> (kBlock));
+    std::vector<float> downBlk (static_cast<std::size_t> (kBlock));
 
+    octaver.setLevels (0.0f, 1.0f);
     for (std::size_t base = 0; base < total; base += static_cast<std::size_t> (kBlock))
     {
         const auto n = static_cast<int> (std::min<std::size_t> (static_cast<std::size_t> (kBlock), total - base));
         for (int i = 0; i < n; ++i)
             inBlk[static_cast<std::size_t> (i)] = in[base + static_cast<std::size_t> (i)];
 
-        divider.process (inBlk.data(), outBlk.data(), n, 1.0f);
+        octaver.process (inBlk.data(), upBlk.data(), downBlk.data(), n);
 
         for (int i = 0; i < n; ++i)
-            out[base + static_cast<std::size_t> (i)] = outBlk[static_cast<std::size_t> (i)];
+            down[base + static_cast<std::size_t> (i)] = downBlk[static_cast<std::size_t> (i)];
     }
 
-    const auto analysisLength = static_cast<int> (0.5 * sr);
-    const auto offset = out.size() - static_cast<std::size_t> (analysisLength);
+    octaver.reset();
+    octaver.setLevels (1.0f, 0.0f);
+    for (std::size_t base = 0; base < total; base += static_cast<std::size_t> (kBlock))
+    {
+        const auto n = static_cast<int> (std::min<std::size_t> (static_cast<std::size_t> (kBlock), total - base));
+        for (int i = 0; i < n; ++i)
+            inBlk[static_cast<std::size_t> (i)] = in[base + static_cast<std::size_t> (i)];
+
+        octaver.process (inBlk.data(), upBlk.data(), downBlk.data(), n);
+
+        for (int i = 0; i < n; ++i)
+            up[base + static_cast<std::size_t> (i)] = upBlk[static_cast<std::size_t> (i)];
+    }
+
+    const auto analysisLength = static_cast<int> (0.6 * sr);
+    const auto offset = total - static_cast<std::size_t> (analysisLength);
 
     auto peak = 0.0f;
-    for (std::size_t i = offset; i < out.size(); ++i)
-        peak = juce::jmax (peak, std::abs (out[i]));
+    for (std::size_t i = offset; i < total; ++i)
+        peak = juce::jmax (peak, juce::jmax (std::abs (down[i]), std::abs (up[i])));
 
-    const auto measured = dominantFrequency (out, offset, analysisLength, sr, freq * 0.4, freq * 0.62);
-    const auto error = cents (measured, freq * 0.5);
+    const auto downFreq = dominantFrequency (down, offset, analysisLength, sr, freq * 0.4, freq * 0.62);
+    const auto upFreq   = dominantFrequency (up, offset, analysisLength, sr, freq * 1.7, freq * 2.3);
 
-    std::printf ("  sr=%g %6.1f Hz -> sub %7.2f Hz (want %7.2f)  err=%+6.1f cents  peak=%.3f\n",
-                 sr, freq, measured, freq * 0.5, error, peak);
+    std::printf ("  sr=%g %6.1f Hz -> down %7.2f Hz (want %7.2f)  up %7.2f Hz (want %7.2f)  peak=%.3f\n",
+                 sr, freq, downFreq, freq * 0.5, upFreq, freq * 2.0, peak);
 
-    // A divider is either exact or it is not doing its job; half a semitone is the
-    // bar, and silence is an outright failure.
-    report (peak > 0.01f && std::abs (error) <= 50.0, "sub-octave is exactly half the input");
+    report (peak > 0.01f
+            && std::abs (cents (downFreq, freq * 0.5)) <= 50.0
+            && std::abs (cents (upFreq, freq * 2.0)) <= 50.0,
+            "polyphonic octaver: down and up are exact");
+}
+
+void checkOctaveChord (double sr, double low, double high)
+{
+    const auto total = static_cast<std::size_t> (2.5 * sr);
+    std::vector<float> in (total);
+    for (std::size_t i = 0; i < total; ++i)
+        in[i] = 0.2f * static_cast<float> (std::sin (2.0 * 3.14159265358979323846 * low * i / sr)
+                                          + std::sin (2.0 * 3.14159265358979323846 * high * i / sr));
+
+    PolyphonicOctaver octaver;
+    octaver.prepare (sr);
+
+    std::vector<float> down (total, 0.0f), up (total, 0.0f);
+    std::vector<float> upBlk (static_cast<std::size_t> (kBlock));
+    std::vector<float> downBlk (static_cast<std::size_t> (kBlock));
+
+    octaver.setLevels (1.0f, 1.0f);
+    for (std::size_t base = 0; base < total; base += static_cast<std::size_t> (kBlock))
+    {
+        const auto n = static_cast<int> (std::min<std::size_t> (static_cast<std::size_t> (kBlock), total - base));
+        octaver.process (in.data() + base, upBlk.data(), downBlk.data(), n);
+        for (int i = 0; i < n; ++i)
+        {
+            down[base + static_cast<std::size_t> (i)] = downBlk[static_cast<std::size_t> (i)];
+            up[base + static_cast<std::size_t> (i)] = upBlk[static_cast<std::size_t> (i)];
+        }
+    }
+
+    const auto analysisLength = static_cast<int> (0.6 * sr);
+    const auto offset = total - static_cast<std::size_t> (analysisLength);
+
+    const auto downLow  = dominantFrequency (down, offset, analysisLength, sr, low * 0.4, low * 0.62);
+    const auto downHigh = dominantFrequency (down, offset, analysisLength, sr, high * 0.4, high * 0.62);
+    const auto upLow    = dominantFrequency (up, offset, analysisLength, sr, low * 1.7, low * 2.3);
+    const auto upHigh   = dominantFrequency (up, offset, analysisLength, sr, high * 1.7, high * 2.3);
+
+    std::printf ("  chord %.1f + %.1f Hz -> down %.1f/%.1f  up %.1f/%.1f\n",
+                 low, high, downLow, downHigh, upLow, upHigh);
+
+    report (std::abs (cents (downLow, low * 0.5)) <= 50.0
+            && std::abs (cents (downHigh, high * 0.5)) <= 50.0
+            && std::abs (cents (upLow, low * 2.0)) <= 50.0
+            && std::abs (cents (upHigh, high * 2.0)) <= 50.0,
+            "polyphonic octaver: both notes survive both directions");
 }
 
 //==============================================================================
@@ -1810,9 +1872,9 @@ void checkAcousticVoicing (double sr, int block)
                 && distThd >= 0.20 && distThd > odThd * 1.5, label);
     }
 
-    // 2. The upper octave is rectified, not granular: the strongest component
-    //    after the dry is removed must be 440 Hz.
-    std::printf ("  -- octave up is a rectifier --\n");
+    // 2. The upper octave is phase-scaled, not rectified: the strongest
+    //    component after the dry is removed must be 440 Hz.
+    std::printf ("  -- octave up is phase-scaled --\n");
 
     {
         auto* oct = factory.get (octaver);
@@ -1977,9 +2039,10 @@ int main()
     checkPitch (44100.0, 220.0, -12.0);
     checkPitch (48000.0, 440.0, 5.0);
     checkPitch (48000.0, 330.0, 0.0);
-    checkDivider (44100.0, 110.0);
-    checkDivider (44100.0, 330.0);
-    checkDivider (48000.0, 82.4);
+    checkOctaves (44100.0, 110.0);
+    checkOctaves (44100.0, 330.0);
+    checkOctaves (48000.0, 82.4);
+    checkOctaveChord (44100.0, 220.0, 330.0);
 
     std::printf ("\n===============================================================\n");
     std::printf ("C. every effect at every parameter extreme\n");

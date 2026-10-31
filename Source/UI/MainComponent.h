@@ -145,6 +145,11 @@ private:
     void bufferChanged();
     void sampleRateChanged();
     void addEffectChanged();
+    void directFlagClicked (bool on);
+
+    /** Direct mode is bound to the device pair it opened with; a device change
+        leaves it first, then re-applies the change through the normal path. */
+    void leaveDirectForDeviceChange();
 
     /** Pushes engine state back into the switches and knobs, e.g. after the
         settings file has been applied at start-up. */
@@ -209,17 +214,20 @@ private:
         font; the buffer box shows "480 (10.0 ms)", which needs ~96. The row adds up
         to 1066 logical pixels including the Devices button, and that total is what
         sets minWindowWidth in PedalConfig.h - the first builds clipped both labels
-        because the row was wider than the window was allowed to be. */
+        because the row was wider than the window was allowed to be.
+
+        Row two grew a third flag for DIRECT, so the switches, knobs and meters
+        were tightened enough to keep the whole row inside the same 1080 px. */
     static constexpr int inputTypeWidth   = 110;
     static constexpr int deviceNameWidth  = 210;
     static constexpr int bufferBoxWidth   = 104;
     static constexpr int rateBoxWidth     = 100;
     static constexpr int devicesWidth     = 92;
-    static constexpr int addBoxWidth      = 200;
-    static constexpr int meterWidth       = 150;
+    static constexpr int addBoxWidth      = 190;
+    static constexpr int meterWidth       = 140;
     static constexpr int meterHeight      = 26;
-    static constexpr int knobWidth        = 68;
-    static constexpr int flagWidth        = 112;
+    static constexpr int knobWidth        = 62;
+    static constexpr int flagWidth        = 104;
     static constexpr int flagHeight       = 30;
 
     /** Row 1's x positions, computed in one place: paint() draws the captions and
@@ -244,9 +252,13 @@ private:
     std::unique_ptr<juce::ComboBox> bufferBox, sampleRateBox, addBox;
 
     std::unique_ptr<Knob> dryWetKnob, trimKnob, expressionKnob;
-    std::unique_ptr<FlagButton> monitorFlag, virtualFlag;
+    std::unique_ptr<FlagButton> monitorFlag, virtualFlag, directFlag;
     std::unique_ptr<LevelMeter> physicalMeter, virtualMeter;
     std::unique_ptr<SmallTextButton> devicesButton;
+
+    /** Direct mode has to be off while the device panel is used, then turned back
+        on if it was on before. This is the fact that survives the panel. */
+    bool directWasOnBeforeChooser = false;
 
     /** True when start-up decided the device chooser should be up but the
         language question has not been answered yet, so the chooser can be asked

@@ -68,6 +68,17 @@ target_link_libraries(device_probe PRIVATE
     juce::juce_audio_devices
     juce::juce_recommended_config_flags)
 
+# Opens one duplex manager on the first interface that has both endpoints, then
+# prints what each Windows Audio mode really grants: buffer sizes, driver latency
+# and xruns. This is the raw-API check behind the app's LOW LAT numbers.
+add_executable(duplex_probe duplex_probe.cpp)
+target_compile_features(duplex_probe PRIVATE cxx_std_17)
+target_compile_options(duplex_probe PRIVATE /utf-8 /bigobj)
+target_compile_definitions(duplex_probe PRIVATE JUCE_DEFINE_MAIN=0)
+target_link_libraries(duplex_probe PRIVATE
+    juce::juce_audio_devices
+    juce::juce_recommended_config_flags)
+
 # Loads one VST3 effect through the same JUCE classes the Plugin Host uses and
 # prints its class list, parameters, processing result and state size. This is
 # the diagnostic for "the card says a plugin is loaded": it checks the hosting

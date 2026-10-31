@@ -181,7 +181,7 @@ language: Chinese (Simplified)
 "%1  -  loop %2 s / %3 s" = "%1  -  循环 %2 秒 / %3 秒"
 "Wah sweep follows MIDI CC 11" = "哇音扫频跟随 MIDI CC 11"
 "Source is MIDI CC but no MIDI input is open - the Position knob drives the sweep" = "来源设为 MIDI CC，但没有打开的 MIDI 输入 — 扫频改由「位置」旋钮控制"
-"Single notes track best - the divider and the rectifier are both monophonic." = "单音跟踪效果最好 — 分频器与整流器都只适用于单音。"
+"Polyphonic octaver - both octaves follow chords, with no note tracking." = "复音八度：上下两个八度都能跟随和弦，无需单音跟踪。"
 "Spectral pitch shifter: clean tracking on chords and single notes, about 80 ms latency." = "频谱移调：和弦与单音都能干净跟踪，约 80 ms 延迟。"
 "IR error: %1" = "IR 错误：%1"
 "file not found" = "找不到文件"
@@ -276,6 +276,18 @@ language: Chinese (Simplified)
 "   virtual +%1" = "   虚拟 +%1"
 "CPU %1%   sample rate %2 Hz   block %3   slots %4/%5   dropped blocks  input %6 (over %7 / under %8)  virtual %9 (over %10 / under %11)" = "CPU %1%   采样率 %2 Hz   块长 %3   插槽 %4/%5   丢弃块数  输入 %6（溢出 %7 / 不足 %8）  虚拟 %9（溢出 %10 / 不足 %11）"
 "The monitoring path is not running. Open Devices and apply an output device." = "监听路径未运行。请打开「音频设备」并应用一个输出设备。"
+
+// ---- direct / low-latency mode ---------------------------------------------
+"DIRECT" = "直通"
+"LATENCY" = "延迟"
+"Direct mode needs a selected input and monitor output." = "直通模式需要先选择输入设备和监听输出设备。"
+"Direct mode needs the input and the monitor output from the same interface. Set MONITOR DEVICE to the interface's own speaker or headphone output." = "直通模式要求输入和监听输出属于同一块声卡。请把「监听设备」选为该声卡自己的扬声器或耳机输出。"
+"Direct: %1" = "直通：%1"
+"Direct audio system: %1" = "直通音频系统：%1"
+"No driver exposes the selected input and monitor output together." = "没有驱动能同时打开所选的输入和监听输出。"
+"No driver would open the selected input and monitor output as one duplex stream." = "没有驱动能把所选的输入和监听输出打开为一个双工流。"
+"The normal path could not be restored: %1" = "无法恢复普通音频路径：%1"
+"Direct  round-trip %1 (in %2 + out %3)  chain %4  buffer %5  xruns %6  [%7]" = "直通  往返 %1（输入 %2 + 输出 %3）  效果链 %4  缓冲 %5  断音 %6  [%7]"
 
 // ---- dynamics and filter footers -------------------------------------------
 "Gain reduction %1 dB" = "增益衰减 %1 dB"
